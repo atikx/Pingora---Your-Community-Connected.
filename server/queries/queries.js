@@ -1,0 +1,125 @@
+export const queries = {
+  checkUser: `SELECT * FROM users WHERE email = $1`,
+  getUser: `SELECT id,name,email,isadmin,avatar,is_verified,created_at FROM users WHERE id = $1`,
+  createUser: `INSERT INTO users (email, name, is_verified) VALUES ($1, $2, $3) RETURNING *`,
+  createUserWithPassword: `INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *`,
+  createOtp: `UPDATE users SET otp = $1 WHERE email = $2`,
+  makeVerified: `UPDATE users SET is_verified = true WHERE email = $1 RETURNING *`,
+  getUserInBackendById: `SELECT * FROM users WHERE id = $1`,
+  updateProfile: `UPDATE users SET name = $1, password = $2 WHERE id = $3 RETURNING *`,
+  updateAvatar: `UPDATE users SET avatar = $1 WHERE id = $2 RETURNING *`,
+  addPost: `INSERT INTO posts (user_id, title, description, content, image, tags, category) VALUES ($1, $2, $3, $4, $5, $6::text[], $7) RETURNING *`,
+  getAllPosts: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.views,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts
+    JOIN users ON posts.user_id = users.id`,
+  getPostsCount: `SELECT COUNT(*) FROM posts`,
+  getFilteredPosts: {
+    Latest: `ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
+    Oldest: `ORDER BY posts.created_at ASC LIMIT $1 OFFSET $2`,
+    "Most Popular": `ORDER BY posts.views DESC LIMIT $1 OFFSET $2`,
+  },
+  getPostById: `SELECT
+    posts.*,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.id = $1`,
+
+  increasePostViews: `UPDATE posts SET views = views + 1 WHERE id = $1 RETURNING *`,
+  filterPostByCategory: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts
+    JOIN users ON posts.user_id = users.id where posts.category = $1`,
+
+  // New query for counting filtered posts
+  getFilteredPostsCount: `SELECT COUNT(*) FROM posts WHERE category = $1`,
+
+  // New sorting options for filtered posts
+  getFilteredPostsSorting: {
+    Latest: `ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
+    Oldest: `ORDER BY posts.created_at ASC LIMIT $2 OFFSET $3`,
+    "Most Popular": `ORDER BY posts.views DESC LIMIT $2 OFFSET $3`,
+  },
+
+  searchPost: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts
+    JOIN users ON posts.user_id = users.id where posts.title ILIKE '%' || $1 || '%' OR posts.description ILIKE '%' || $1 || '%'`,
+
+  searchPostCount: `SELECT COUNT(*) FROM posts 
+                    JOIN users ON posts.user_id = users.id 
+                    WHERE posts.title ILIKE $1 OR posts.description ILIKE $1`,
+
+  searchPostWithPagination: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+    FROM posts
+    JOIN users ON posts.user_id = users.id 
+    WHERE posts.title ILIKE $1 OR posts.description ILIKE $1`,
+
+  // Sorting options for search results
+  getSearchPostsSorting: {
+    Latest: `ORDER BY posts.created_at DESC LIMIT $2 OFFSET $3`,
+    Oldest: `ORDER BY posts.created_at ASC LIMIT $2 OFFSET $3`,
+    "Most Popular": `ORDER BY posts.views DESC LIMIT $2 OFFSET $3`,
+  },
+
+  addComment: `WITH inserted_comment AS (
+  INSERT INTO comments (user_id, post_id, parent_id, content)
+  VALUES ($1, $2, $3, $4)
+  RETURNING *
+)
+SELECT 
+  inserted_comment.*, 
+  users.name AS user_name, 
+  users.avatar AS user_avatar
+FROM inserted_comment
+JOIN users ON inserted_comment.user_id = users.id`,
+
+  getCommentsByPostId: `SELECT 
+  comments.*,
+  users.name AS user_name,
+  users.avatar AS user_avatar
+FROM comments
+JOIN users ON comments.user_id = users.id
+WHERE comments.post_id = $1`,
+};

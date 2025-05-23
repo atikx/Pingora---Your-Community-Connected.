@@ -1,15 +1,10 @@
 import { create } from 'zustand';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
-}
+import { type UserInterface } from './ability';
 
 interface AuthState {
-  user: User | null;
-  setUser: (user: User) => void;
+  user: UserInterface | null;
+  setUser: (user: UserInterface) => void;
   clearUser: () => void;
 }
 

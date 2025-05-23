@@ -113,7 +113,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 } */
 
-
 /* code for orange theme */
 :root {
   --radius: 0.75rem;
@@ -194,41 +193,61 @@
   }
 }
 
-body{
+body {
   width: 100vw;
   overflow-x: hidden;
+}#editorjs h1, .editorjs h1 {
+  @apply text-7xl text-center w-full font-bold mb-6;
 }
 
-
-#editorjs h1 {
-  @apply text-7xl text-center font-bold;
+#editorjs h2, .editorjs h2 {
+  @apply text-6xl text-center w-full font-bold mb-5;
 }
 
-#editorjs h2 {
-  @apply text-6xl text-center font-bold;
+#editorjs h3, .editorjs h3 {
+  @apply text-5xl text-center w-full font-bold mb-4;
 }
 
-#editorjs h3 {
-  @apply text-5xl text-center font-bold;
+#editorjs h4, .editorjs h4 {
+  @apply text-4xl text-start text-gray-600 w-full font-bold mb-3;
 }
 
-#editorjs h4 {
-  @apply text-4xl text-center font-bold;
+#editorjs h5, .editorjs h5 {
+  @apply text-3xl text-center w-full font-bold mb-3;
 }
 
-#editorjs h5 {
-  @apply text-3xl text-center font-bold;
+#editorjs h6, .editorjs h6 {
+  @apply text-2xl text-center w-full font-bold mb-2;
 }
 
-#editorjs h6 {
-  @apply text-2xl text-center font-bold;
+/* Paragraph block styling */
+#editorjs .ce-paragraph, .editorjs .ce-paragraph {
+  @apply text-black text-start text-lg leading-relaxed mb-4;
 }
 
-
-#editorjs .ce-paragraph {
-  @apply text-black;
+/* Block container styling */
+#editorjs .ce-block__content, .editorjs .ce-block__content {
+  @apply p-4 max-w-full flex flex-col justify-center items-start mb-4;
 }
 
+/* Embed tool */
+#editorjs .embed-tool, .editorjs .embed-tool {
+  @apply w-full px-10 flex flex-col mb-6;
+}
+
+#editorjs .embed-tool iframe, .editorjs .embed-tool iframe {
+  @apply h-[550px] rounded-lg;
+}
+
+/* Redactor wrapper */
+#editorjs .codex-editor__redactor, .editorjs .codex-editor__redactor {
+  @apply h-fit pb-0;
+}
+
+/* Editor wrapper itself */
+#editorjs, .editorjs {
+  @apply p-4 box-border;
+}
 
 
 /* editor js css */

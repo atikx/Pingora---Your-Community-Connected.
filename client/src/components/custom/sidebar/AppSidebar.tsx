@@ -44,7 +44,7 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: SettingsIcon,
     },
     {
@@ -95,7 +95,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-      </SidebarHeader>
+    </SidebarHeader>
       <SidebarContent>
         <NavMain isadmin={ability.can("create", "post")} items={data.navMain} />
 

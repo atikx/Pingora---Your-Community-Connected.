@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Menu } from "lucide-react";
 import LoadingBar from "react-top-loading-bar";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 import {
   NavigationMenu,
@@ -35,15 +36,17 @@ export function Navbar() {
   const loadingBarRef = useRef<LoadingBarRef | null>(null);
   const [search, setSearch] = useState("");
   const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
   // Array for categories
   const categories = [
-    { name: "Technology", href: "/categories/tech" },
-    { name: "Business", href: "/categories/business" },
-    { name: "Sports", href: "/categories/sports" },
-    { name: "Entertainment", href: "/categories/entertainment" },
-    { name: "Science", href: "/categories/science" },
-    { name: "Health", href: "/categories/health" },
+    { name: "Technology" },
+    { name: "Business" },
+    { name: "Sports" },
+    { name: "Entertainment" },
+    { name: "Science" },
+    { name: "Health" },
+    { name: "Current Affairs" },
   ];
 
   // Trigger loading bar on route changes
@@ -64,7 +67,7 @@ export function Navbar() {
 
   const handleSearch = () => {
     if (search !== "") {
-      console.log("Search for:", search);
+      navigate(`/search/${search}`);
     } else {
       toast.info("Please enter a search term");
     }
@@ -83,7 +86,7 @@ export function Navbar() {
         <div className="w-full">
           <div className="flex h-16 px-4 pr-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
             <div className="flex gap-12">
-              <SidebarTrigger className="cursor-pointer" />
+              {user && <SidebarTrigger className="cursor-pointer" />}
 
               {/* Logo */}
               <Link to="/" className="flex items-center gap-2">
@@ -104,7 +107,7 @@ export function Navbar() {
                         {categories.map((category, index) => (
                           <NavLink
                             key={index}
-                            to={category.href}
+                            to={`/filter/${category.name}`}
                             className={({ isActive }) =>
                               isActive
                                 ? "px-4 py-2 bg-white/30 rounded-md text-primary font-medium"
@@ -154,27 +157,42 @@ export function Navbar() {
                   value={search}
                 />
                 <Search className="absolute left-3 h-4 w-4 text-gray-400" />
-                <Button onClick={handleSearch} className="cursor-pointer">Search</Button>
+                <Button onClick={handleSearch} className="cursor-pointer">
+                  Search
+                </Button>
               </div>
 
               {/* User Profile */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8 border border-gray-200/20">
-                    <AvatarImage
-                      src={
-                        user?.avatar ||
-                        "https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg"
-                      }
-                      alt="User"
-                    />
-                    <AvatarFallback>BZ</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline-flex font-medium">
-                    {user?.name.split(" ")[0] || "Guest"}
-                  </span>
+
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8 border border-gray-200/20">
+                      <AvatarImage
+                        src={
+                          user?.avatar ||
+                          "https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg"
+                        }
+                        alt="User"
+                      />
+                      <AvatarFallback>BZ</AvatarFallback>
+                    </Avatar>
+                    <span className="hidden md:inline-flex font-medium">
+                      {user?.name.split(" ")[0] || "Guest"}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    // Handle login logic here
+                    navigate("/auth");
+                  }}
+                >
+                  Log in
+                </Button>
+              )}
 
               {/* Mobile Menu */}
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
