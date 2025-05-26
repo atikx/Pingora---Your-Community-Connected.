@@ -13,7 +13,7 @@ npm run dev
 
 
 ### 2. Start the Backend
-```
+```bash
 cd ./server
 npm install
 node index.js
@@ -29,8 +29,9 @@ Make sure you have the following installed:
 
 
 ## 📁 Project Structure
-
+```
 pingora/
 ├── client/ # Frontend application
 ├── server/ # Backend application
 └── README.md # This file
+```
