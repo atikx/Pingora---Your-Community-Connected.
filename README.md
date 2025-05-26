@@ -13,11 +13,11 @@ npm run dev
 
 
 ### 2. Start the Backend
-
+```
 cd ./server
 npm install
 node index.js
-
+```
 
 
 ## Prerequisites
