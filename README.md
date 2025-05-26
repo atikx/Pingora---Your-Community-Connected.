@@ -5,11 +5,11 @@
 Follow these steps to run the project locally:
 
 ### 1. Start the Frontend
-
+```bash
 cd ./client
 npm install
 npm run dev
-
+```
 
 
 ### 2. Start the Backend
