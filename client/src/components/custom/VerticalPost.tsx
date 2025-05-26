@@ -16,7 +16,9 @@ const VerticalPost = ({ post }: { post: PostProps }) => {
   return (
     <div
       className="backdrop-blur-md p-2 cursor-pointer hover:scale-105 transition duration-500 bg-white/10 border border-white/20 rounded-2xl shadow-xl w-80 overflow-hidden"
-      onClick={() => navigate(`/post/${post.id}`)}
+      onClick={() => {
+        if (post.id) navigate(`/post/${post.id}`);
+      }}
     >
       <div className="rounded-sm h-full overflow-hidden">
         <img
@@ -46,7 +48,7 @@ const VerticalPost = ({ post }: { post: PostProps }) => {
               </div>
             </div>
             <div className="text-xs text-gray-600">
-              {post.views && `${post.views} views`}
+              {post.views >= 0 && `${post.views} views`}
             </div>
           </div>
         </div>

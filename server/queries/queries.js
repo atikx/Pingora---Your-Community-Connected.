@@ -31,6 +31,7 @@ FROM posts
   },
   getPostById: `SELECT
     posts.*,
+    users.id AS author_id,
     users.name AS author_name,
     users.email AS author_email,
     users.avatar AS author_avatar
@@ -44,6 +45,7 @@ FROM posts
     posts.title,
     posts.description,
     posts.image,
+    posts.views,
     posts.tags,
     posts.category,
     posts.created_at,
@@ -68,6 +70,7 @@ FROM posts
     posts.title,
     posts.description,
     posts.image,
+    posts.views,
     posts.tags,
     posts.category,
     posts.created_at,
@@ -86,6 +89,7 @@ FROM posts
     posts.title,
     posts.description,
     posts.image,
+    posts.views,
     posts.tags,
     posts.category,
     posts.created_at,
@@ -122,4 +126,18 @@ JOIN users ON inserted_comment.user_id = users.id`,
 FROM comments
 JOIN users ON comments.user_id = users.id
 WHERE comments.post_id = $1`,
+
+  checkSubscription: `SELECT * FROM subscriptions WHERE user_id = $1 AND author_id = $2`,
+  addSubscription: `INSERT INTO subscriptions (user_id, author_id) VALUES ($1, $2) RETURNING *`,
+  deleteSubscription: `DELETE FROM subscriptions WHERE user_id = $1 AND author_id = $2 RETURNING *`,
+
+  getSubscribers: `SELECT users.email
+FROM subscriptions
+    JOIN users ON subscriptions.user_id = users.id
+WHERE
+    subscriptions.author_id = $1`,
+
+  checkLike: `SELECT * FROM likes WHERE user_id = $1 AND post_id = $2`,
+  addLike: `INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *`,
+  deleteLike: `DELETE FROM likes WHERE user_id = $1 AND post_id = $2 RETURNING *`,
 };

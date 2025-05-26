@@ -39,20 +39,23 @@ CREATE TABLE comments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     user_id UUID REFERENCES users (id) ON DELETE CASCADE,
     post_id UUID REFERENCES posts (id) ON DELETE CASCADE,
-    parent_id UUID REFERENCES comments(id) ON DELETE CASCADE,
+    parent_id UUID REFERENCES comments (id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE subscriptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    user_id UUID REFERENCES users (id) ON DELETE CASCADE,
+    author_id UUID REFERENCES users (id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (user_id, author_id)
+);
 
-SELECT 
-  comments.*,
-  users.name AS user_name,
-  users.avatar AS user_avatar
+SELECT comments.*, users.name AS user_name, users.avatar AS user_avatar
 FROM comments
-JOIN users ON comments.user_id = users.id;
-
+    JOIN users ON comments.user_id = users.id;
 
 DROP Table comments CASCADE
 
@@ -83,13 +86,7 @@ SELECT * from users
 DELETE FROM users WHERE name = 'john';
 
 SELECT
-    id,
-    name,
-    email,
-    isadmin,
-    avatar,
-    is_verified,
-    created_at
+    *
 FROM users
 
 SELECT * from posts
@@ -111,27 +108,23 @@ FROM posts
     JOIN users ON posts.user_id = users.id
 ORDER BY posts.created_at DESC;
 
-
-
-
 SELECT
     posts.*,
     users.name AS author_name,
     users.email AS author_email,
     users.avatar AS author_avatar
 FROM posts
-JOIN users ON posts.user_id = users.id
-WHERE posts.id = '62131742-5665-44e4-a18d-c6b38daf87cb';
+    JOIN users ON posts.user_id = users.id
+WHERE
+    posts.id = '62131742-5665-44e4-a18d-c6b38daf87cb';
 
+SELECT COUNT(*) FROM posts WHERE user_id IN ( SELECT id FROM users );
 
+DELETE from posts
+where
+    user_id = '2f0b368a-022e-4a93-9054-52c800e435b4';
 
-SELECT COUNT(*) FROM posts
-WHERE user_id IN (SELECT id FROM users);
-
-DELETE from posts where user_id = '2f0b368a-022e-4a93-9054-52c800e435b4';
-
-SELECT * FROM POSTS ;
-
+SELECT * FROM POSTS;
 
 SELECT
     posts.id,
@@ -145,4 +138,44 @@ SELECT
     users.email AS author_email,
     users.avatar AS author_avatar
 FROM posts
-    JOIN users ON posts.user_id = users.id where posts.category = 'Science'
+    JOIN users ON posts.user_id = users.id
+where
+    posts.category = 'Science'
+
+SELECT
+    posts.*,
+    users.id AS author_id,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts
+    JOIN users ON posts.user_id = users.id;
+
+SELECT users.email
+FROM subscriptions
+    JOIN users ON subscriptions.user_id = users.id
+WHERE
+    subscriptions.author_id = '76ed88f3-9cdc-4fff-8074-f9083cbf74d7';
+
+DELETE FROM subscriptions;
+
+SELECT * FROM subscriptions;
+
+SELECT * from users
+
+INSERT INTO subscriptions (user_id, author_id)
+VALUES ('a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa', '76ed88f3-9cdc-4fff-8074-f9083cbf74d')
+RETURNING *;
+
+UPDATE users SET is_verified = true WHERE email = 'modi@gmail.com' RETURNING *
+
+
+SELECT users.email
+FROM subscriptions
+    JOIN users ON subscriptions.user_id = users.id
+WHERE
+    subscriptions.author_id = '76ed88f3-9cdc-4fff-8074-f9083cbf74d7';
+
+    delete from subscriptions
+
+    select * from subscriptions;

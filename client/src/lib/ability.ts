@@ -26,6 +26,8 @@ const defineAbilityFor = (user: UserInterface) => {
     can("like", "post"); // can like posts
     can("comment", "post"); // can comment on posts
     can("create", "comment"); // can create comments
+    can("subscribe", "author"); // can subscribe to author
+    can("like", "post")
   } else {
     can("read", "post"); // read-only access to posts
   }

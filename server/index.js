@@ -7,6 +7,7 @@ import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import generalRoutes from "./routes/general.routes.js";
 import verifiedUserRoutes from "./routes/verifiedUser.routes.js";
+import { sendNewPostMail } from "./functions/mailer.js";
 import { sendOtpMail } from "./functions/mailer.js";
 dotenv.config();
 
@@ -22,9 +23,19 @@ app.use("/admin", adminRoutes);
 app.use("/general", generalRoutes);
 app.use("/verifiedUser", verifiedUserRoutes);
 
-app.get("/", (req, res) => res.send("Pingora API is running"));
-
-// sendOtpMail("atikshgupta6373@gmail.com", 698745);
+app.get("/", async (req, res) => {
+  await sendNewPostMail(["atikshgupta6373@gmail.com", "atikshg69.com"], {
+    author_name: "Atiksh Gupta",
+    author_avatar: "https://example.com/avatar.jpg",
+    post_link: "https://your-site.com/post/abc123",
+    post_image: "https://your-site.com/images/post-cover.jpg",
+    post_title: "Understanding Async/Await in JavaScript",
+    post_description: "A deep dive into async programming in JS...",
+    post_created_at: new Date().toDateString(),
+  });
+  res.status(200).json({ message: "Welcome to the server!" });
+  console.log("Welcome to the server!");
+});
 
 app.listen(PORT, async () => {
   console.log(`Server running on port ${PORT}`);

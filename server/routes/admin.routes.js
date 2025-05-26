@@ -5,6 +5,7 @@ import { queries } from "../queries/queries.js";
 import dotenv from "dotenv";
 import { saveImgOnDisk } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../functions/imageUploader.js";
+import { sendNewPostMail } from "../functions/mailer.js";
 
 const router = Router();
 router.post(
@@ -13,7 +14,7 @@ router.post(
   saveImgOnDisk.single("image"),
   async (req, res) => {
     const { title, description, content, tags, category } = req.body;
-    const { id } = req.admin;
+    const { id, name, avatar } = req.admin;
 
     const localFilePath = req.file?.path;
     if (!localFilePath) {
@@ -53,10 +54,31 @@ router.post(
         });
       }
 
-      return res.status(200).json({
+      res.status(200).json({
         message: "Post added successfully",
         post: rows[0],
       });
+      try {
+        const { rows: subscribers } = await pool.query(queries.getSubscribers, [
+          id,
+        ]);
+        if (subscribers.length > 0) {
+          await sendNewPostMail(
+            subscribers.map((sub) => sub.email),
+            {
+              author_name: name,
+              author_avatar: avatar,
+              post_link: `${process.env.CLIENT_URL}/post/${rows[0].id}`,
+              post_image: cloudinaryResponse,
+              post_title: title,
+              post_description: description,
+              post_created_at: rows[0].created_at,
+            }
+          );
+        }
+      } catch (error) {
+        console.log("errro in finding subscribers", error);
+      }
     } catch (error) {
       console.error("Error adding post:", error);
       return res.status(500).json({

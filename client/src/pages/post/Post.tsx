@@ -107,6 +107,8 @@ export default function Post() {
       <div className="md:w-1/4">
         {postData && (
           <Author
+            author_id={postData.author_id}
+            post_id={postData.id}
             name={postData.author_name}
             avatar={postData.author_avatar}
             email={postData.author_email}
