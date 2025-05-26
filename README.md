@@ -1,11 +1,13 @@
-﻿# Pingora---Your-Community-Connected.
+# 🚀 Pingora — Your Community Connected
 
- Run these commands first
- cd ./client
- npm i
- npm run dev
+## Getting Started
 
- then open a new termical and run 
- cd ./server
- npm i
- 
+Follow these steps to run the project locally:
+
+### 1. Start the Frontend
+
+```bash
+cd ./client
+npm install
+npm run dev
+
