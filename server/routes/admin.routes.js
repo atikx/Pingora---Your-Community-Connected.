@@ -88,4 +88,35 @@ router.post(
   }
 );
 
+router.post(
+  "/uploadImageForEditor",
+  authenticateAdminToken,
+  saveImgOnDisk.single("image"),
+  async (req, res) => {
+    try {
+      const localFilePath = req.file?.path;
+      if (!localFilePath) {
+        return res.status(400).json({ message: "No image uploaded" });
+      }
+
+      // Upload to Cloudinary
+      const cloudinaryResponse = await uploadOnCloudinary(localFilePath);
+      console.log(cloudinaryResponse);
+      if (!cloudinaryResponse) {
+        return res.status(500).json({ message: "Failed to upload image" });
+      }
+
+      res.status(200).json({
+        message: "Image uploaded successfully",
+        imageUrl: cloudinaryResponse,
+      });
+    } catch (error) {
+      console.error("Error uploading image for editor:", error);
+      return res.status(500).json({
+        message: "Internal Server Error",
+      });
+    }
+  }
+);
+
 export default router;

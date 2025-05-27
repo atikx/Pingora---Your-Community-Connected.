@@ -12,6 +12,16 @@ const firebaseConfig = {
   measurementId: "G-M2V9K0VJ7J"
 };
 
+// const firebaseConfig = {
+//   apiKey: "AIzaSyC5Qx-s9TJy48SsQlCwr-zm69-HJpSb7z8",
+//   authDomain: "pingorav2.firebaseapp.com",
+//   projectId: "pingorav2",
+//   storageBucket: "pingorav2.firebasestorage.app",
+//   messagingSenderId: "1020060535020",
+//   appId: "1:1020060535020:web:467d01f19f57f09e1bbdc9",
+//   measurementId: "G-SSWDB01GH0"
+// };
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 getAnalytics(app);

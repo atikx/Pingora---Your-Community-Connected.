@@ -28,7 +28,6 @@ export default function NewPost() {
         try {
           const content = await editor.save();
           localStorage.setItem("postData", JSON.stringify(content));
-          console.log("Auto-saved:", content);
         } catch (error) {
           console.error("Auto-save failed:", error);
         }
