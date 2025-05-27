@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 type PostProps = {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   image: string;

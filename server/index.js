@@ -9,6 +9,9 @@ import generalRoutes from "./routes/general.routes.js";
 import verifiedUserRoutes from "./routes/verifiedUser.routes.js";
 import { sendNewPostMail } from "./functions/mailer.js";
 import { sendOtpMail } from "./functions/mailer.js";
+import cron from "node-cron";
+import { scheduledPostUploader } from "./functions/scheduledPostUploader.js";
+
 dotenv.config();
 
 const app = express();
@@ -35,6 +38,10 @@ app.get("/", async (req, res) => {
   });
   res.status(200).json({ message: "Welcome to the server!" });
   console.log("Welcome to the server!");
+});
+
+cron.schedule("* * * * *", () => {
+  scheduledPostUploader();
 });
 
 app.listen(PORT, async () => {

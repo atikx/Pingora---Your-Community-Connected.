@@ -24,7 +24,9 @@ CREATE TABLE posts (
     category VARCHAR(50),
     views INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_scheduled BOOLEAN DEFAULT FALSE,
+    scheduled_at TIMESTAMP
 );
 
 CREATE TABLE likes (
@@ -85,9 +87,7 @@ SELECT * from users
 
 DELETE FROM users WHERE name = 'john';
 
-SELECT
-    *
-FROM users
+SELECT * FROM users
 
 SELECT * from posts
 
@@ -163,12 +163,22 @@ SELECT * FROM subscriptions;
 
 SELECT * from users
 
-INSERT INTO subscriptions (user_id, author_id)
-VALUES ('a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa', '76ed88f3-9cdc-4fff-8074-f9083cbf74d')
-RETURNING *;
+INSERT INTO
+    subscriptions (user_id, author_id)
+VALUES (
+        'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa',
+        '76ed88f3-9cdc-4fff-8074-f9083cbf74d'
+    )
+RETURNING
+    *;
 
-UPDATE users SET is_verified = true WHERE email = 'modi@gmail.com' RETURNING *
-
+UPDATE users
+SET
+    is_verified = true
+WHERE
+    email = 'modi@gmail.com'
+RETURNING
+    *
 
 SELECT users.email
 FROM subscriptions
@@ -176,6 +186,37 @@ FROM subscriptions
 WHERE
     subscriptions.author_id = '76ed88f3-9cdc-4fff-8074-f9083cbf74d7';
 
-    delete from subscriptions
+delete from subscriptions
 
-    select * from subscriptions;
+select * from subscriptions;
+
+SELECT * from posts
+
+ALTER TABLE posts
+ADD COLUMN is_scheduled BOOLEAN DEFAULT FALSE,
+ADD COLUMN scheduled_at TIMESTAMP;
+
+SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.views,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts
+JOIN users ON posts.user_id = users.id
+WHERE posts.is_scheduled = false;
+
+
+
+select * from posts where is_scheduled = true;
+
+DELETE FROM posts WHERE id = 'efe5d3ed-1955-4fa2-8ac0-3575ab8101da';
+-- 2025-05-19 15:17:05.324281
+
+UPDATE posts SET created_at = '2025-05-19 15:17:05.324281' WHERE id = 'a09d9796-6e3c-46bf-bdf4-31e3765df55d';

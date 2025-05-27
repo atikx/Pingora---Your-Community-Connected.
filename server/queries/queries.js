@@ -9,6 +9,9 @@ export const queries = {
   updateProfile: `UPDATE users SET name = $1, password = $2 WHERE id = $3 RETURNING *`,
   updateAvatar: `UPDATE users SET avatar = $1 WHERE id = $2 RETURNING *`,
   addPost: `INSERT INTO posts (user_id, title, description, content, image, tags, category) VALUES ($1, $2, $3, $4, $5, $6::text[], $7) RETURNING *`,
+
+  addScheduledPost: `INSERT INTO posts (user_id, title, description, content, image, tags, category, is_scheduled,scheduled_at) VALUES ($1, $2, $3, $4, $5, $6::text[], $7, $8, $9) RETURNING *`,
+
   getAllPosts: `SELECT
     posts.id,
     posts.title,
@@ -21,9 +24,10 @@ export const queries = {
     users.name AS author_name,
     users.email AS author_email,
     users.avatar AS author_avatar
-FROM posts
-    JOIN users ON posts.user_id = users.id`,
-  getPostsCount: `SELECT COUNT(*) FROM posts`,
+FROM posts 
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.is_scheduled = false`,
+  getPostsCount: `SELECT COUNT(*) FROM posts where is_scheduled = false`,
   getFilteredPosts: {
     Latest: `ORDER BY posts.created_at DESC LIMIT $1 OFFSET $2`,
     Oldest: `ORDER BY posts.created_at ASC LIMIT $1 OFFSET $2`,
@@ -56,7 +60,7 @@ FROM posts
     JOIN users ON posts.user_id = users.id where posts.category = $1`,
 
   // New query for counting filtered posts
-  getFilteredPostsCount: `SELECT COUNT(*) FROM posts WHERE category = $1`,
+  getFilteredPostsCount: `SELECT COUNT(*) FROM posts WHERE category = $1 AND is_scheduled = false`,
 
   // New sorting options for filtered posts
   getFilteredPostsSorting: {
@@ -82,7 +86,8 @@ FROM posts
 
   searchPostCount: `SELECT COUNT(*) FROM posts 
                     JOIN users ON posts.user_id = users.id 
-                    WHERE posts.title ILIKE $1 OR posts.description ILIKE $1`,
+                    WHERE (posts.title ILIKE $1 OR posts.description ILIKE $1)
+AND posts.is_scheduled = false`,
 
   searchPostWithPagination: `SELECT
     posts.id,
@@ -140,4 +145,20 @@ WHERE
   checkLike: `SELECT * FROM likes WHERE user_id = $1 AND post_id = $2`,
   addLike: `INSERT INTO likes (user_id, post_id) VALUES ($1, $2) RETURNING *`,
   deleteLike: `DELETE FROM likes WHERE user_id = $1 AND post_id = $2 RETURNING *`,
+
+  ReallyAddScheduledPost: `WITH updated_posts AS (
+  UPDATE posts
+  SET is_scheduled = false, created_at = NOW()
+  WHERE scheduled_at <= NOW() AND is_scheduled = true
+  RETURNING *
+)
+SELECT 
+  updated_posts.*,
+  users.name AS author_name,
+  users.email AS author_email,
+  users.avatar AS author_avatar
+FROM updated_posts
+JOIN users ON updated_posts.user_id = users.id`,
+
+  getScheduledPosts: `SELECT * FROM posts WHERE is_scheduled = true AND scheduled_At >= NOW() ORDER BY scheduled_at ASC`,
 };

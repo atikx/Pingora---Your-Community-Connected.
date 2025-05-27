@@ -19,7 +19,7 @@ import Profile from "./pages/profile/Profile";
 
 function App() {
   return (
-    <div className="flex h-full flex-col px-4 items-center justify-center">
+    <div className="flex h-full flex-col px-4 items-center ">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<div>Categories</div>} />
