@@ -268,7 +268,7 @@ export default function Comments({ post_id }: { post_id: string }) {
       toast.success("Comment added successfully!");
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || "Failed to add comment");
+      toast.error(error.response.data || "Failed to add comment");
     },
   });
 

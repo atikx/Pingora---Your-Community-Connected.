@@ -2,15 +2,15 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { pool } from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import generalRoutes from "./routes/general.routes.js";
 import verifiedUserRoutes from "./routes/verifiedUser.routes.js";
 import { sendNewPostMail } from "./functions/mailer.js";
-import { sendOtpMail } from "./functions/mailer.js";
 import cron from "node-cron";
 import { scheduledPostUploader } from "./functions/scheduledPostUploader.js";
+
+
 
 dotenv.config();
 

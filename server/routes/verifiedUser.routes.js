@@ -3,10 +3,11 @@ import { pool } from "../config/db.js";
 import { queries } from "../queries/queries.js";
 import { authenticateVerifiedUserToken } from "../middlewares/jwtauth.js";
 const router = Router();
+import { limitTo10in1, limitTo1in1Day } from "../middlewares/rateLimiters.js";
 
 router.use(authenticateVerifiedUserToken);
 
-router.post("/addComment", async (req, res) => {
+router.post("/addComment", limitTo10in1, async (req, res) => {
   const { post_id, content, parent_id } = req.body;
   const { id } = req.verifiedUser;
 
@@ -66,7 +67,7 @@ router.get("/checkSubscription/:author_id", async (req, res) => {
   }
 });
 
-router.post("/addSubscription", async (req, res) => {
+router.post("/addSubscription", limitTo10in1, async (req, res) => {
   const { author_id } = req.body;
   const { id } = req.verifiedUser;
 
@@ -91,7 +92,7 @@ router.post("/addSubscription", async (req, res) => {
   }
 });
 
-router.post("/deleteSubscription", async (req, res) => {
+router.post("/deleteSubscription", limitTo10in1, async (req, res) => {
   const { author_id } = req.body;
   const { id } = req.verifiedUser;
 
@@ -144,7 +145,7 @@ router.get("/checkLike/:post_id", async (req, res) => {
   }
 });
 
-router.post("/addLike", async (req, res) => {
+router.post("/addLike", limitTo10in1, async (req, res) => {
   const { post_id } = req.body;
   const { id } = req.verifiedUser;
 
@@ -169,7 +170,7 @@ router.post("/addLike", async (req, res) => {
   }
 });
 
-router.post("/deleteLike", async (req, res) => {
+router.post("/deleteLike", limitTo10in1, async (req, res) => {
   const { post_id } = req.body;
   const { id } = req.verifiedUser;
 
@@ -191,6 +192,33 @@ router.post("/deleteLike", async (req, res) => {
     return res.status(500).json({
       message: "Internal server error",
     });
+  }
+});
+
+
+router.post("/requestForAdmin",limitTo1in1Day,  async (req, res) => {
+  try {
+    const user = await pool.query(queries.getUserInBackendById, [
+      req.user.dbId,
+    ]);
+    if (user.rowCount) {
+      if (user.rows[0].isadmin) {
+        return res.status(200).json({
+          message: "You are already an admin",
+        });
+      } else {
+        const { name, email } = user.rows[0];
+        await sendRequestMailForAdminToMe(name, email, req.body.reason);
+        return res.status(200).json({
+          message: "Request to become Admin sent ",
+        });
+      }
+    } else {
+      return res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error in /requestForAdmin route:", error);
+    res.status(500).send("Internal server error");
   }
 });
 

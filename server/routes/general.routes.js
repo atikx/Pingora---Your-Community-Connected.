@@ -1,10 +1,10 @@
 import Router from "express";
 import { pool } from "../config/db.js";
 import { queries } from "../queries/queries.js";
-
+import { limitTo10in1 } from "../middlewares/rateLimiters.js";
 const router = Router();
 
-router.get("/getAllPosts", async (req, res) => {
+router.get("/getAllPosts",limitTo10in1, async (req, res) => {
   try {
     const { filter = "Latest", page = 1, limit = 8 } = req.query;
     const offset = (page - 1) * parseInt(limit);
@@ -70,7 +70,7 @@ router.get("/getPost/:id", async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
-router.get("/filter", async (req, res) => {
+router.get("/filter",limitTo10in1, async (req, res) => {
   try {
     const { category, sort = "Latest" } = req.query;
     const page = parseInt(req.query.page) || 1;

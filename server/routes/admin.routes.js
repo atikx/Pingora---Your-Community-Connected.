@@ -6,11 +6,13 @@ import dotenv from "dotenv";
 import { saveImgOnDisk } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../functions/imageUploader.js";
 import { sendNewPostMail } from "../functions/mailer.js";
+import { limitTo2in1 } from "../middlewares/rateLimiters.js";
 
 const router = Router();
 
 router.post(
   "/addPost",
+  limitTo2in1,
   authenticateAdminToken,
   saveImgOnDisk.single("image"),
   async (req, res) => {
@@ -51,10 +53,10 @@ router.post(
       try {
         // Parse the UTC datetime string
         const utcDate = new Date(utcDateString);
-        
+
         // IST is UTC + 5:30
-        const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
-        
+        const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000);
+
         // Return as ISO string without timezone info (local time)
         return istDate.toISOString().slice(0, 19); // Remove the 'Z' at the end
       } catch (error) {
@@ -117,7 +119,7 @@ router.post(
       try {
         // Convert UTC scheduled_at to IST
         const scheduledAtIST = convertUTCtoIST(scheduled_at);
-        
+
         if (!scheduledAtIST) {
           return res.status(400).json({
             message: "Invalid scheduled_at format",

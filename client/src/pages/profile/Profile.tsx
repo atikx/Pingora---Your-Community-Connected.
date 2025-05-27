@@ -53,7 +53,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
   const [activeTab, setActiveTab] = useState(defaultTab);
   const [openAdminDialog, setOpenAdminDialog] = useState(false);
   const [adminReason, setAdminReason] = useState("");
-  
+
   // Avatar related states - removed URL-related states
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState(user?.avatar || "");
@@ -86,19 +86,26 @@ export default function Profile({ defaultTab }: ProfileProps) {
     mutationFn: async () => {
       setUploadStatus("Uploading...");
       console.log("Starting upload process");
-      
+
       if (imageFile) {
         const formData = new FormData();
         formData.append("image", imageFile);
-        
+
         // Log the form data contents
-        console.log("Form data created with file:", imageFile.name, "size:", imageFile.size, "type:", imageFile.type);
-        
+        console.log(
+          "Form data created with file:",
+          imageFile.name,
+          "size:",
+          imageFile.size,
+          "type:",
+          imageFile.type
+        );
+
         // Log all entries in FormData for debugging
         for (let pair of formData.entries()) {
-          console.log(pair[0] + ': ' + pair[1]);
+          console.log(pair[0] + ": " + pair[1]);
         }
-        
+
         return api.post("/user/updateAvatar", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -111,7 +118,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
         ...user,
         avatar: previewUrl,
       });
-      
+
       setUploadStatus("Upload successful");
       console.log("Upload completed successfully:", res.data);
       toast.success("Profile picture updated successfully");
@@ -121,14 +128,14 @@ export default function Profile({ defaultTab }: ProfileProps) {
     onError: (error: any) => {
       setUploadStatus("Upload failed");
       console.error("Upload error:", error);
-      
+
       let errorMessage = "Failed to update avatar";
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       toast.error(`Error: ${errorMessage}`);
     },
   });
@@ -141,7 +148,14 @@ export default function Profile({ defaultTab }: ProfileProps) {
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      console.log("File dropped:", file.name, "size:", file.size, "type:", file.type);
+      console.log(
+        "File dropped:",
+        file.name,
+        "size:",
+        file.size,
+        "type:",
+        file.type
+      );
       setImageFile(file);
       const fileReader = new FileReader();
       fileReader.onload = (e) => {
@@ -156,10 +170,10 @@ export default function Profile({ defaultTab }: ProfileProps) {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp']
+      "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
     },
     maxSize: 5242880, // 5MB
-    multiple: false
+    multiple: false,
   });
 
   // Handle avatar update
@@ -168,7 +182,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
       toast.error("Please select an image to upload");
       return;
     }
-    
+
     updateAvatarMutation.mutate();
   };
 
@@ -178,7 +192,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
 
   const adminRequestMutation = useMutation({
     mutationFn: async () => {
-      return api.post("/user/requestForAdmin", {
+      return api.post("/verified/requestForAdmin", {
         reason: adminReason,
       });
     },
@@ -243,7 +257,6 @@ export default function Profile({ defaultTab }: ProfileProps) {
                 <AvatarFallback className="text-4xl bg-primary/10">
                   {user.name[0]}
                 </AvatarFallback>
-               
               </Avatar>
               <div className="flex items-center gap-2">
                 <CardTitle className="text-3xl font-bold">
@@ -404,7 +417,10 @@ export default function Profile({ defaultTab }: ProfileProps) {
                       </p>
                     </div>
                   </div>
-                  <Dialog open={openAvatarDialog} onOpenChange={setOpenAvatarDialog}>
+                  <Dialog
+                    open={openAvatarDialog}
+                    onOpenChange={setOpenAvatarDialog}
+                  >
                     <DialogTrigger asChild>
                       <Button variant="outline">
                         <Edit className="h-4 w-4" /> Change Avatar
@@ -426,8 +442,11 @@ export default function Profile({ defaultTab }: ProfileProps) {
                             </AvatarFallback>
                           </Avatar>
                         </div>
-                        
-                        <div {...getRootProps()} className="border-2 border-dashed border-primary/50 rounded-lg p-6 text-center hover:bg-muted/50 transition cursor-pointer">
+
+                        <div
+                          {...getRootProps()}
+                          className="border-2 border-dashed border-primary/50 rounded-lg p-6 text-center hover:bg-muted/50 transition cursor-pointer"
+                        >
                           <input {...getInputProps()} />
                           {isDragActive ? (
                             <div className="flex flex-col items-center gap-2">
@@ -437,26 +456,30 @@ export default function Profile({ defaultTab }: ProfileProps) {
                           ) : (
                             <div className="flex flex-col items-center gap-2">
                               <Upload className="h-8 w-8 text-muted-foreground" />
-                              <p>Drag & drop an image here, or click to select</p>
+                              <p>
+                                Drag & drop an image here, or click to select
+                              </p>
                               <p className="text-xs text-muted-foreground">
                                 Supports JPG, PNG, GIF up to 5MB
                               </p>
                             </div>
                           )}
                         </div>
-                        
+
                         {imageFile && (
                           <div className="flex items-center justify-between p-2 border rounded-md bg-muted/20">
                             <div className="flex items-center gap-2 truncate">
                               <div className="h-10 w-10 shrink-0 rounded-md bg-background flex items-center justify-center">
-                                <img 
-                                  src={previewUrl} 
-                                  alt="Preview" 
+                                <img
+                                  src={previewUrl}
+                                  alt="Preview"
                                   className="h-8 w-8 object-cover rounded"
                                 />
                               </div>
                               <div className="flex flex-col truncate">
-                                <span className="text-sm font-medium truncate">{imageFile.name}</span>
+                                <span className="text-sm font-medium truncate">
+                                  {imageFile.name}
+                                </span>
                                 <span className="text-xs text-muted-foreground">
                                   {(imageFile.size / 1024 / 1024).toFixed(2)}MB
                                 </span>
@@ -475,15 +498,17 @@ export default function Profile({ defaultTab }: ProfileProps) {
                             </Button>
                           </div>
                         )}
-                        
+
                         {uploadStatus && (
-                          <div className={`text-sm p-2 rounded ${
-                            uploadStatus.includes("successful") 
-                              ? "bg-green-100 text-green-800" 
-                              : uploadStatus.includes("failed") 
-                                ? "bg-red-100 text-red-800" 
+                          <div
+                            className={`text-sm p-2 rounded ${
+                              uploadStatus.includes("successful")
+                                ? "bg-green-100 text-green-800"
+                                : uploadStatus.includes("failed")
+                                ? "bg-red-100 text-red-800"
                                 : "bg-blue-100 text-blue-800"
-                          }`}>
+                            }`}
+                          >
                             {uploadStatus}
                           </div>
                         )}
@@ -502,7 +527,9 @@ export default function Profile({ defaultTab }: ProfileProps) {
                         </Button>
                         <Button
                           onClick={handleAvatarUpdate}
-                          disabled={updateAvatarMutation.isLoading || !imageFile}
+                          disabled={
+                            updateAvatarMutation.isLoading || !imageFile
+                          }
                         >
                           {updateAvatarMutation.isLoading ? (
                             <div className="flex items-center gap-2">
@@ -548,7 +575,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
                   </>
                 )}
 
-                {!user.isadmin && (
+                {!user.isadmin && user.is_verified && (
                   <>
                     <Separator />
                     <div className="flex items-center justify-between">

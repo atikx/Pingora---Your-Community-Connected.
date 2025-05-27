@@ -10,6 +10,8 @@ import { sendOtpMail } from "../functions/mailer.js";
 import { sendRequestMailForAdminToMe } from "../functions/mailer.js";
 import { saveImgOnDisk } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../functions/imageUploader.js";
+import { limitTo10in1 } from "../middlewares/rateLimiters.js";
+import { limitTo2in1 } from "../middlewares/rateLimiters.js";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -17,7 +19,7 @@ admin.initializeApp({
 
 const router = Router();
 
-router.post("/auth", async (req, res) => {
+router.post("/auth",limitTo10in1, async (req, res) => {
   try {
     if (!req.body.token) {
       console.log(req.body);
@@ -117,7 +119,7 @@ router.get("/getUser", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/logout", authenticateToken, async (req, res) => {
+router.post("/logout",limitTo10in1, authenticateToken, async (req, res) => {
   try {
     res.clearCookie("token");
     return res.status(200).json({ message: "Logged out successfully" });
@@ -127,7 +129,7 @@ router.post("/logout", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/verifyOtp", authenticateToken, async (req, res) => {
+router.post("/verifyOtp",limitTo2in1, authenticateToken, async (req, res) => {
   try {
     const otp = parseInt(req.body.pin);
     const user = await pool.query(queries.getUserInBackendById, [
@@ -154,7 +156,7 @@ router.post("/verifyOtp", authenticateToken, async (req, res) => {
   }
 });
 
-router.put("/updateProfile", authenticateToken, async (req, res) => {
+router.put("/updateProfile",limitTo2in1, authenticateToken, async (req, res) => {
   try {
     const { newName, newPassword } = req.body;
     if (!newName.trim() && !newPassword.trim()) {
@@ -181,7 +183,7 @@ router.put("/updateProfile", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/verifyEmail", authenticateToken, async (req, res) => {
+router.post("/verifyEmail",limitTo2in1, authenticateToken, async (req, res) => {
   try {
     const user = await pool.query(queries.getUserInBackendById, [
       req.user.dbId,
@@ -202,34 +204,11 @@ router.post("/verifyEmail", authenticateToken, async (req, res) => {
   }
 });
 
-router.post("/requestForAdmin", authenticateToken, async (req, res) => {
-  try {
-    const user = await pool.query(queries.getUserInBackendById, [
-      req.user.dbId,
-    ]);
-    if (user.rowCount) {
-      if (user.rows[0].isadmin) {
-        return res.status(200).json({
-          message: "You are already an admin",
-        });
-      } else {
-        const { name, email } = user.rows[0];
-        await sendRequestMailForAdminToMe(name, email, req.body.reason);
-        return res.status(200).json({
-          message: "Request to become Admin sent ",
-        });
-      }
-    } else {
-      return res.status(404).json({ message: "User not found" });
-    }
-  } catch (error) {
-    console.error("Error in /requestForAdmin route:", error);
-    res.status(500).send("Internal server error");
-  }
-});
+
 
 router.post(
   "/updateAvatar",
+  limitTo2in1,
   authenticateToken,
   saveImgOnDisk.single("image"),
   async (req, res) => {
