@@ -198,4 +198,17 @@ FROM likes
 JOIN posts ON likes.post_id = posts.id
 JOIN users ON posts.user_id = users.id
 WHERE likes.user_id = $1 order by posts.created_at DESC`,
+
+  getSubscriptions: `SELECT 
+  users.id,
+  users.name,
+  users.avatar,
+  users.created_at as member_since,
+  subscriptions.created_at
+FROM subscriptions 
+JOIN users ON subscriptions.author_id = users.id
+WHERE subscriptions.user_id = $1`,
+
+
+deleteSubscription: `DELETE FROM subscriptions WHERE user_id = $1 AND author_id = $2 RETURNING *`,
 };

@@ -214,9 +214,14 @@ WHERE posts.is_scheduled = false;
 
 
 
-select * from likes ;
+select * from subscriptions ;
 
-DELETE FROM posts WHERE id = 'efe5d3ed-1955-4fa2-8ac0-3575ab8101da';
--- 2025-05-19 15:17:05.324281
 
-UPDATE posts SET created_at = '2025-05-19 15:17:05.324281' WHERE id = 'a09d9796-6e3c-46bf-bdf4-31e3765df55d';
+SELECT 
+  users.id,
+  users.name,
+  users.avatar,
+  users.created_at
+FROM subscriptions 
+JOIN users ON subscriptions.author_id = users.id
+WHERE subscriptions.user_id = 'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa';

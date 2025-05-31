@@ -246,4 +246,57 @@ router.get("/getLikedPosts",authenticateVerifiedUserToken, async (req, res) => {
   }
 });
 
+router.get("/getSubscriptions", authenticateVerifiedUserToken, async (req, res) => {
+  const { id } = req.verifiedUser;
+
+  try {
+    const { rows } = await pool.query(queries.getSubscriptions, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "No subscriptions found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Subscriptions retrieved successfully",
+      subscriptions: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
+
+router.put("/deleteSubscription", limitTo10in1, async (req, res) => {
+  const { author_id } = req.body;
+  const { id } = req.verifiedUser;
+
+  try {
+    const { rows } = await pool.query(queries.deleteSubscription, [
+      id,
+      author_id,
+    ]);
+
+    if (rows.length === 0) {
+      return res.status(400).json({
+        message: "Failed to delete subscription",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Subscription deleted successfully",
+      subscription: rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
 export default router;

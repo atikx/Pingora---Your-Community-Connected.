@@ -17,6 +17,7 @@ import Search from "./pages/search/Search";
 import UserProtected from "./pages/protected/UserProtected";
 import Profile from "./pages/profile/Profile";
 import LikedPosts from "./pages/likedPosts/LikedPosts";
+import Subscriptions from "./pages/subscriptions/Subscriptions";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/profile" element={<Profile defaultTab="profile" />} />
           <Route path="/settings" element={<Profile defaultTab="settings" />} />
           <Route path="/likedPosts" element={<LikedPosts />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
         </Route>
       </Routes>
     </div>
