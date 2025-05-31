@@ -53,10 +53,12 @@ export function NavMain({ items, isadmin }: props) {
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <Link to={item.url}>{item.title}</Link>
-              </SidebarMenuButton>
+              <Link to={item.url} >
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
+                  {item.title}
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>

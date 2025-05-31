@@ -222,4 +222,28 @@ router.post("/requestForAdmin",limitTo1in1Day,  async (req, res) => {
   }
 });
 
+
+router.get("/getLikedPosts",authenticateVerifiedUserToken, async (req, res) => {
+  const { id } = req.verifiedUser;
+  try {
+    const { rows } = await pool.query(queries.getLikedPosts, [id]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "No liked posts found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Liked posts retrieved successfully",
+      likedPosts: rows,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+});
+
 export default router;

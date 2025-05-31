@@ -181,4 +181,21 @@ FROM posts
     WHERE posts.user_id = $1 order by posts.created_at DESC`,
 
   deletePost: `DELETE FROM posts WHERE id = $1 RETURNING *`,
+
+  getLikedPosts: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.views,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM likes
+JOIN posts ON likes.post_id = posts.id
+JOIN users ON posts.user_id = users.id
+WHERE likes.user_id = $1 order by posts.created_at DESC`,
 };

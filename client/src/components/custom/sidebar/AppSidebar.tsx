@@ -47,11 +47,6 @@ const data = {
       url: "/settings",
       icon: SettingsIcon,
     },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: HelpCircleIcon,
-    },
   ],
   admin: [
     {
@@ -70,6 +65,7 @@ const data = {
 import { useAuthStore } from "@/lib/store";
 import { defineAbilityFor } from "@/lib/ability";
 import { Can } from "@casl/react";
+import { Link } from "react-router-dom";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthStore((state) => state);
@@ -88,14 +84,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <Link to="/">
                 <Newspaper className="h-5 w-5" />
                 <span className="text-base font-semibold">PINGORA</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-    </SidebarHeader>
+      </SidebarHeader>
       <SidebarContent>
         <NavMain isadmin={ability.can("create", "post")} items={data.navMain} />
 

@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import api from "@/lib/axiosinstance";
 import { set } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AuthorProps {
   author_id: string;
@@ -52,6 +53,7 @@ export default function Author({
   const user = useAuthStore((state) => state.user);
   const ability = defineAbilityFor(user);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   // State management
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isCheckingSubscription, setIsCheckingSubscription] =
@@ -95,7 +97,7 @@ export default function Author({
       if (res.status === 200) {
         toast.success("Post deleted successfully!");
         setShowDeleteDialog(false);
-        navigate("/yourPosts"); 
+        navigate("/yourPosts");
       }
     } catch (error) {
       console.error("Error deleting post:", error);
@@ -175,8 +177,13 @@ export default function Author({
       const res = await api.post("/verifiedUser/addLike", {
         post_id,
       });
-      setIsLiked(res.status === 200);
-      toast.success("Post liked");
+      if (res.status === 200) {
+        setIsLiked(true);
+        queryClient.invalidateQueries({
+          queryKey: ["likedPosts"],
+        });
+        toast.success("Post liked");
+      }
     } catch (error) {
       console.error("Error liking post:", error);
       toast.error("Failed to like post. Please try again.");
@@ -189,8 +196,13 @@ export default function Author({
       const res = await api.post("/verifiedUser/deleteLike", {
         post_id,
       });
-      res.status === 200 && setIsLiked(false);
-      toast.success("Post unliked");
+      if (res.status === 200) {
+        setIsLiked(false);
+        queryClient.invalidateQueries({
+          queryKey: ["likedPosts"],
+        });
+        toast.success("Post unliked");
+      }
     } catch (error) {
       console.error("Error unliking post:", error);
       toast.error("Failed to unlike post. Please try again.");

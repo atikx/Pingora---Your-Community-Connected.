@@ -190,7 +190,7 @@ delete from subscriptions
 
 select * from subscriptions;
 
-SELECT * from posts
+SELECT * from likes;
 
 ALTER TABLE posts
 ADD COLUMN is_scheduled BOOLEAN DEFAULT FALSE,
@@ -214,7 +214,7 @@ WHERE posts.is_scheduled = false;
 
 
 
-select COUNT(*) from comments ;
+select * from likes ;
 
 DELETE FROM posts WHERE id = 'efe5d3ed-1955-4fa2-8ac0-3575ab8101da';
 -- 2025-05-19 15:17:05.324281
