@@ -28,6 +28,7 @@ import { Can } from "@casl/react";
 import { toast } from "sonner";
 import api from "@/lib/axiosinstance";
 import { set } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface AuthorProps {
   author_id: string;
@@ -50,12 +51,13 @@ export default function Author({
 }: AuthorProps) {
   const user = useAuthStore((state) => state.user);
   const ability = defineAbilityFor(user);
-
+  const navigate = useNavigate();
   // State management
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isCheckingSubscription, setIsCheckingSubscription] =
     useState<boolean>(false);
   const [isSubscribing, setIsSubscribing] = useState<boolean>(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
   const [isUnsubscribing, setIsUnsubscribing] = useState<boolean>(false);
   const [subscriptionError, setSubscriptionError] = useState<string | null>(
     null
@@ -86,6 +88,20 @@ export default function Author({
 
     checkSubscriptionStatus();
   }, [user?.id, author_id]);
+
+  const handleDeletePost = async () => {
+    try {
+      const res = await api.put(`/admin/deletePost/${post_id}`);
+      if (res.status === 200) {
+        toast.success("Post deleted successfully!");
+        setShowDeleteDialog(false);
+        navigate("/yourPosts"); 
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      toast.error("Failed to delete post. Please try again.");
+    }
+  };
 
   useEffect(() => {
     const checkLikeStatus = async () => {
@@ -225,7 +241,7 @@ export default function Author({
                         isLiked ? "fill-current" : ""
                       }`}
                     />
-                    {isLiked ? "Liked" : "Like Post"}   
+                    {isLiked ? "Liked" : "Like Post"}
                   </Button>
                 </div>
               </Can>
@@ -320,7 +336,7 @@ export default function Author({
 
             {/* Show "Your Post" section if user is the author */}
             {user?.id === author_id && (
-              <div className="w-full">
+              <div className="w-full flex flex-col gap-4">
                 <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 p-4 backdrop-blur-sm border border-white/30">
                   <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-orange-600/10 animate-pulse"></div>
                   <div className="relative flex items-center justify-center space-x-2">
@@ -333,6 +349,36 @@ export default function Author({
                       style={{ animationDelay: "0.2s" }}
                     />
                   </div>
+                </div>
+                <div>
+                  <AlertDialog
+                    open={showDeleteDialog}
+                    onOpenChange={setShowDeleteDialog}
+                  >
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Delete Post
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete Post</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to delete this post? This action
+                          cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleDeletePost}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             )}

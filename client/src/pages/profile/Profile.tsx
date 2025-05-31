@@ -131,7 +131,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
 
       let errorMessage = "Failed to update avatar";
       if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
+        errorMessage = error.response.data;
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -202,7 +202,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
       setAdminReason("");
     },
     onError: (error: any) => {
-      toast.error(`Error: ${error.response.data.message}`);
+      toast.error(`Error: ${error.response.data}`);
     },
   });
 
@@ -222,7 +222,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
       navigate("/auth/otp");
     },
     onError: (error: any) => {
-      toast.error(`Error: ${error.response.data.message}`);
+      toast.error(`Error: ${error.response.data}`);
     },
   });
 

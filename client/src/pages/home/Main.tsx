@@ -192,7 +192,7 @@ export default function Main() {
 
       {/* Posts Grid */}
       {!isLoading && posts.length > 0 && (
-        <div className="flex justify-center flex-wrap gap-8">
+        <div className="flex justify-center gap-8">
           {posts.map((post : any, index : any) => (
             <VerticalPost key={post.id || index} post={post} />
           ))}

@@ -193,4 +193,50 @@ router.post(
   }
 );
 
+router.get("/getYourPosts", authenticateAdminToken, async (req, res) => {
+  try {
+    const { rows } = await pool.query(queries.getYourPosts, [req.admin.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "No posts found" });
+    }
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.put(
+  "/deletePost/:postId",
+  limitTo2in1,
+  authenticateAdminToken,
+  async (req, res) => {
+    const { postId } = req.params;
+    const { id } = req.admin;
+
+    try {
+      // Check if the post exists and belongs to the admin
+      const { rows: postRows } = await pool.query(queries.getPostById, [
+        postId,
+      ]);
+      if (postRows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Post not found or unauthorized" });
+      }
+      const post = postRows[0];
+      // Check if the post is of user
+      if (post.user_id !== id) {
+        return res.status(403).json({ message: "Fuck off Mother Fucker" });
+      }
+      // Delete the post
+      await pool.query(queries.deletePost, [postId]);
+      res.status(200).json({ message: "Post deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+);
+
 export default router;

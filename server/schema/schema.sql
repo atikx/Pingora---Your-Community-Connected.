@@ -214,7 +214,7 @@ WHERE posts.is_scheduled = false;
 
 
 
-select * from posts where is_scheduled = true;
+select COUNT(*) from comments ;
 
 DELETE FROM posts WHERE id = 'efe5d3ed-1955-4fa2-8ac0-3575ab8101da';
 -- 2025-05-19 15:17:05.324281

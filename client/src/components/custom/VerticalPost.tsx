@@ -9,6 +9,8 @@ type PostProps = {
   author_name: string;
   author_avatar: string;
   views?: number;
+  is_scheduled?: boolean;
+  scheduled_at?: string;
 };
 
 const VerticalPost = ({ post }: { post: PostProps }) => {

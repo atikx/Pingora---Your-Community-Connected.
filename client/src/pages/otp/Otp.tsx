@@ -59,7 +59,7 @@ export function Otp() {
     },
     onError: (error: any) => {
       console.error(error);
-      toast.error(error.response?.data?.message || "Verification failed");
+      toast.error(error.response?.data || "Verification failed");
     },
   });
 

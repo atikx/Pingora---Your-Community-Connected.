@@ -32,12 +32,12 @@ const data = {
   navMain: [
     {
       title: "Subriptions",
-      url: "#",
+      url: "/subscriptions",
       icon: UsersIcon,
     },
     {
       title: "Liked Posts",
-      url: "#",
+      url: "/likedPosts",
       icon: Heart,
     },
   ],

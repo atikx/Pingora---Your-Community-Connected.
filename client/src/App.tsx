@@ -16,6 +16,7 @@ import Search from "./pages/search/Search";
 // only after login user can access these routes
 import UserProtected from "./pages/protected/UserProtected";
 import Profile from "./pages/profile/Profile";
+import LikedPosts from "./pages/likedPosts/LikedPosts";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
         <Route element={<UserProtected />}>
           <Route path="/profile" element={<Profile defaultTab="profile" />} />
           <Route path="/settings" element={<Profile defaultTab="settings" />} />
+          <Route path="/likedPosts" element={<LikedPosts />} />
         </Route>
       </Routes>
     </div>

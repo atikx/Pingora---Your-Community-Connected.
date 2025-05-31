@@ -17,7 +17,7 @@ interface props {
   }[];
   isadmin?: boolean;
 }
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export function NavMain({ items, isadmin }: props) {
   const navigate = useNavigate();
@@ -55,7 +55,7 @@ export function NavMain({ items, isadmin }: props) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                <Link to={item.url}>{item.title}</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

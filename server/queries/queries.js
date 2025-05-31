@@ -161,4 +161,24 @@ FROM updated_posts
 JOIN users ON updated_posts.user_id = users.id`,
 
   getScheduledPosts: `SELECT * FROM posts WHERE is_scheduled = true AND scheduled_At >= NOW() ORDER BY scheduled_at ASC`,
+
+  getYourPosts: `SELECT
+    posts.id,
+    posts.title,
+    posts.description,
+    posts.image,
+    posts.views,
+    posts.tags,
+    posts.category,
+    posts.created_at,
+    posts.is_scheduled,
+    posts.scheduled_at,
+    users.name AS author_name,
+    users.email AS author_email,
+    users.avatar AS author_avatar
+FROM posts 
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.user_id = $1 order by posts.created_at DESC`,
+
+  deletePost: `DELETE FROM posts WHERE id = $1 RETURNING *`,
 };
