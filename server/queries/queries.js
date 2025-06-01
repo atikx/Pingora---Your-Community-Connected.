@@ -41,7 +41,7 @@ FROM posts
     users.avatar AS author_avatar
     FROM posts
     JOIN users ON posts.user_id = users.id
-    WHERE posts.id = $1`,
+    WHERE posts.id = $1 AND posts.is_scheduled = false`,
 
   increasePostViews: `UPDATE posts SET views = views + 1 WHERE id = $1 RETURNING *`,
   filterPostByCategory: `SELECT
@@ -57,7 +57,7 @@ FROM posts
     users.email AS author_email,
     users.avatar AS author_avatar
 FROM posts
-    JOIN users ON posts.user_id = users.id where posts.category = $1`,
+    JOIN users ON posts.user_id = users.id where posts.category = $1 AND posts.is_scheduled = false`,
 
   // New query for counting filtered posts
   getFilteredPostsCount: `SELECT COUNT(*) FROM posts WHERE category = $1 AND is_scheduled = false`,

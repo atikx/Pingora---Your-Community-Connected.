@@ -115,6 +115,9 @@ function YourPosts() {
             {uploadedPosts.map((post) => (
               <div key={post.id} className="relative">
                 <VerticalPost post={post} />
+                <div className="mt-2 text-xs text-gray-600 text-center">
+                    Created on: {new Date(post.created_at).toLocaleString()}
+                  </div>
                 <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs">
                   Published
                 </div>

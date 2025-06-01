@@ -389,9 +389,9 @@ export default function AddPostData(): JSX.Element {
 
   return (
     <div className="flex flex-col gap-8 p-8 w-full bg-white rounded-lg">
-      <div className="flex gap-8">
+      <div className="flex flex-col md:flex-row gap-8">
         {/* Input Section */}
-        <div className="w-1/2 space-y-6">
+        <div className="md:w-1/2 space-y-6">
           <div>
             <div
               {...getRootProps()}

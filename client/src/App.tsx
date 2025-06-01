@@ -21,7 +21,7 @@ import Subscriptions from "./pages/subscriptions/Subscriptions";
 
 function App() {
   return (
-    <div className="flex h-full flex-col px-4 items-center ">
+    <div className="flex h-full flex-col px-4 z-10 lg:pr-8 items-center ">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<div>Categories</div>} />

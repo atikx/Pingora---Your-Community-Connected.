@@ -81,7 +81,7 @@ export default function Post() {
             <iframe
               width={block.data.width}
               height={block.data.height}
-              className="h-[550px] rounded-lg w-full"
+              className="h-[200px] md:h-[550px] rounded-lg w-full"
               src={block.data.embed}
               title={block.data.caption || "Embedded content"}
               frameBorder="0"
@@ -173,7 +173,7 @@ export default function Post() {
       </div>
 
       {/* Render the author area with tags */}
-      <div className="md:w-1/4">
+      <div className="md:w-1/4 flex justify-center items-center md:block">
         {postData && (
           <Author
             author_id={postData.author_id}

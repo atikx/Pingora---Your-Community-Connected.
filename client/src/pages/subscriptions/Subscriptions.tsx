@@ -299,7 +299,7 @@ export default function Subscriptions() {
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleUnsubscribe}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex-1"
+              className="bg-primary text-white hover:bg-destructive/90 flex-1"
               disabled={unsubscribeMutation.isPending}
             >
               {unsubscribeMutation.isPending ? (

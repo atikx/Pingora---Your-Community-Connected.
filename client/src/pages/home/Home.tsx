@@ -5,7 +5,7 @@ import Main from "./Main";
 
 function Home() {
   return (
-    <div className="py-10">
+    <div className="py-10 ">
       {/* Hero Section */}
 
       <Hero />

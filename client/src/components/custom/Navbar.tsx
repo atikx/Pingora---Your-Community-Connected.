@@ -81,9 +81,9 @@ export function Navbar() {
         height={3}
         shadow={true}
       />
-      <nav className="sticky top-0 z-50 w-screen overflow-x-hidden">
+      <nav className="sticky top-0 z-50  overflow">
         <div className="w-full max-w-full">
-          <div className="flex h-16 px-2 sm:px-4 lg:px-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
+          <div className="flex h-16 px-4  pr-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
             
             {/* Left Section: Sidebar + Logo */}
             <div className="flex items-center gap-2 sm:gap-4 lg:gap-12 min-w-0 flex-shrink-0">
@@ -105,7 +105,7 @@ export function Navbar() {
                     <NavigationMenuTrigger className="bg-transparent hover:bg-white/10">
                       Categories
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white/80 backdrop-blur-md backdrop-filter rounded-lg border border-gray-200/20">
+                    <NavigationMenuContent className="bg-white/80 backdrop-blur-md backdrop-filter  rounded-lg border border-gray-200/20">
                       <div className="grid gap-3 p-4 w-[200px]">
                         {categories.map((category, index) => (
                           <NavLink
