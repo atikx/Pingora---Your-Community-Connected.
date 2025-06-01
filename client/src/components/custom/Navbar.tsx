@@ -40,13 +40,13 @@ export function Navbar() {
 
   // Array for categories
   const categories = [
-    { name: "Technology" },
-    { name: "Business" },
-    { name: "Sports" },
-    { name: "Entertainment" },
-    { name: "Science" },
-    { name: "Health" },
-    { name: "Current Affairs" },
+    { name: "Technology", href: "/filter/Technology" },
+    { name: "Business", href: "/filter/Business" },
+    { name: "Sports", href: "/filter/Sports" },
+    { name: "Entertainment", href: "/filter/Entertainment" },
+    { name: "Science", href: "/filter/Science" },
+    { name: "Health", href: "/filter/Health" },
+    { name: "Current Affairs", href: "/filter/Current Affairs" },
   ];
 
   // Trigger loading bar on route changes
@@ -76,25 +76,28 @@ export function Navbar() {
   return (
     <>
       <LoadingBar
-        // color="black"
         className="text-primary"
         ref={loadingBarRef}
         height={3}
         shadow={true}
       />
-      <nav className="sticky top-0 z-50 w-full">
-        <div className="w-full">
-          <div className="flex h-16 px-4 pr-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
-            <div className="flex gap-12">
-              {user && <SidebarTrigger className="cursor-pointer" />}
-
+      <nav className="sticky top-0 z-50 w-screen overflow-x-hidden">
+        <div className="w-full max-w-full">
+          <div className="flex h-16 px-2 sm:px-4 lg:px-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
+            
+            {/* Left Section: Sidebar + Logo */}
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-12 min-w-0 flex-shrink-0">
+              {user && <SidebarTrigger className="cursor-pointer flex-shrink-0" />}
+              
               {/* Logo */}
-              <Link to="/" className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-primary">PINGORA</span>
+              <Link to="/" className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-lg sm:text-xl lg:text-2xl font-bold text-primary">
+                  PINGORA
+                </span>
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
+            {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden lg:flex items-center space-x-1">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -107,7 +110,7 @@ export function Navbar() {
                         {categories.map((category, index) => (
                           <NavLink
                             key={index}
-                            to={`/filter/${category.name}`}
+                            to={category.href}
                             className={({ isActive }) =>
                               isActive
                                 ? "px-4 py-2 bg-white/30 rounded-md text-primary font-medium"
@@ -145,60 +148,70 @@ export function Navbar() {
               </NavigationMenu>
             </div>
 
-            {/* Search and User Section */}
-            <div className="flex items-center gap-4">
-              {/* Search Box */}
-              <div className="relative flex gap-4 md:flex items-center">
-                <Input
-                  type="search"
-                  placeholder="Search Anything"
-                  className="w-[250px] rounded-full bg-white/50 backdrop-blur-sm border-gray-200/20 pl-10 pr-4 "
-                  onChange={(e) => setSearch(e.target.value)}
-                  value={search}
-                />
-                <Search className="absolute left-3 h-4 w-4 text-gray-400" />
-                <Button onClick={handleSearch} className="cursor-pointer">
+            {/* Right Section: Search + User + Mobile Menu */}
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+              
+              {/* Search Box - Responsive */}
+              <div className="relative hidden sm:flex items-center gap-2 lg:gap-4">
+                <div className="relative">
+                  <Input
+                    type="search"
+                    placeholder="Search..."
+                    className="w-[150px] md:w-[200px] lg:w-[250px] rounded-full bg-white/50 backdrop-blur-sm border-gray-200/20 pl-10 pr-4"
+                    onChange={(e) => setSearch(e.target.value)}
+                    value={search}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                </div>
+                <Button 
+                  onClick={handleSearch} 
+                  className="cursor-pointer hidden md:inline-flex"
+                  size="sm"
+                >
                   Search
                 </Button>
               </div>
 
-              {/* User Profile */}
-
+              {/* User Profile - Responsive */}
               {user ? (
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="h-8 w-8 border border-gray-200/20">
-                      <AvatarImage
-                        src={
-                          user?.avatar ||
-                          "https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg"
-                        }
-                        alt="User"
-                      />
-                      <AvatarFallback>BZ</AvatarFallback>
-                    </Avatar>
-                    <span className="hidden md:inline-flex font-medium">
-                      {user?.name.split(" ")[0] || "Guest"}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <Avatar className="h-7 w-7 sm:h-8 sm:w-8 border border-gray-200/20">
+                    <AvatarImage
+                      src={
+                        user?.avatar ||
+                        "https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg"
+                      }
+                      alt="User"
+                    />
+                    <AvatarFallback>
+                      {user?.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:inline-flex font-medium text-sm lg:text-base truncate max-w-[100px]">
+                    {user?.name?.split(" ")[0] || "Guest"}
+                  </span>
                 </div>
               ) : (
                 <Button
                   variant="outline"
-                  onClick={() => {
-                    // Handle login logic here
-                    navigate("/auth");
-                  }}
+                  size="sm"
+                  className="hidden sm:inline-flex"
+                  onClick={() => navigate("/auth")}
                 >
                   Log in
                 </Button>
               )}
 
-              {/* Mobile Menu */}
+              {/* Mobile Menu Button */}
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="lg:hidden">
-                    <Menu className="h-5 w-5" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="lg:hidden flex-shrink-0 h-8 w-8 sm:h-10 sm:w-10"
+                  >
+                    <Menu className="h-4 w-4 sm:h-5 sm:w-5" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent
@@ -210,6 +223,44 @@ export function Navbar() {
                       Menu
                     </div>
 
+                    {/* Mobile Search */}
+                    <div className="sm:hidden">
+                      <div className="text-md font-medium text-gray-900 mb-2">
+                        Search
+                      </div>
+                      <div className="relative flex gap-2">
+                        <Input
+                          type="search"
+                          placeholder="Search Anything"
+                          className="flex-1 rounded-full bg-white/50 backdrop-blur-sm border-gray-200/20 pl-10 pr-4"
+                          onChange={(e) => setSearch(e.target.value)}
+                          value={search}
+                          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        />
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Button onClick={handleSearch} size="sm">
+                          Go
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Mobile Login Button */}
+                    {!user && (
+                      <div className="sm:hidden">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => {
+                            navigate("/auth");
+                            setIsOpen(false);
+                          }}
+                        >
+                          Log in
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Categories */}
                     <div>
                       <div className="text-md font-medium text-gray-900 mb-2">
                         Categories
@@ -232,9 +283,10 @@ export function Navbar() {
                       </div>
                     </div>
 
+                    {/* Navigation Links */}
                     <div className="space-y-2">
                       <NavLink
-                        to="/pages"
+                        to="/"
                         className={({ isActive }) =>
                           isActive
                             ? "block text-primary font-semibold"
@@ -242,10 +294,11 @@ export function Navbar() {
                         }
                         onClick={() => setIsOpen(false)}
                       >
-                        Pages
+                        Home
                       </NavLink>
                       <NavLink
                         to="https://github.com/atikx"
+                        target="_blank"
                         className="block text-gray-900 hover:text-primary"
                         onClick={() => setIsOpen(false)}
                       >

@@ -196,7 +196,9 @@
 body {
   width: 100vw;
   overflow-x: hidden;
-}#editorjs h1, .editorjs h1 {
+}
+
+#editorjs h1, .editorjs h1 {
   @apply text-7xl text-center w-full font-bold mb-6;
 }
 

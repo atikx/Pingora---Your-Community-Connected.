@@ -70,7 +70,7 @@ INSERT INTO
         is_verified
     )
 VALUES (
-        'Narendra Modi',
+        'Atiksh Gupta',
         'nmodi@gmail.com',
         TRUE,
         'https://thumbs.dreamstime.com/b/generative-ai-young-smiling-man-avatar-man-brown-beard-mustache-hair-wearing-yellow-sweater-sweatshirt-d-vector-people-279560903.jpg',
