@@ -6,7 +6,7 @@ interface HeroCardProps {
   
   export function HeroCard({ title, description, imageUrl }: HeroCardProps) {
     return (
-      <div className="relative transition duration-500 hover:scale-105 cursor-pointer overflow-hidden rounded-xl shadow-xl h-[30rem] w-[30rem]">
+      <div className="relative transition duration-500 hover:scale-105 cursor-pointer overflow-hidden rounded-xl shadow-xl md:h-[30rem] md:w-[30rem] h-[25rem] w-[25rem]">
         {/* Background Image */}
         <img
           src={imageUrl}

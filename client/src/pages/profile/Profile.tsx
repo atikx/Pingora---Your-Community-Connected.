@@ -192,7 +192,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
 
   const adminRequestMutation = useMutation({
     mutationFn: async () => {
-      return api.post("/verified/requestForAdmin", {
+      return api.post("/verifiedUser/createAdminRequest", {
         reason: adminReason,
       });
     },

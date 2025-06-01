@@ -1,3 +1,5 @@
+import { get } from "http";
+
 export const queries = {
   checkUser: `SELECT * FROM users WHERE email = $1`,
   getUser: `SELECT id,name,email,isadmin,avatar,is_verified,created_at FROM users WHERE id = $1`,
@@ -209,6 +211,48 @@ FROM subscriptions
 JOIN users ON subscriptions.author_id = users.id
 WHERE subscriptions.user_id = $1`,
 
+  deleteSubscription: `DELETE FROM subscriptions WHERE user_id = $1 AND author_id = $2 RETURNING *`,
 
-deleteSubscription: `DELETE FROM subscriptions WHERE user_id = $1 AND author_id = $2 RETURNING *`,
+  createAdminRequest: `INSERT INTO admin_requests (user_id, reason) VALUES ($1, $2) RETURNING *`,
+  getAdminRequests: `SELECT 
+    admin_requests.id AS request_id,
+    admin_requests.reason,
+    admin_requests.created_at AS request_created_at,
+    admin_requests.updated_at AS request_updated_at,
+    users.id AS user_id,
+    users.name,
+    users.email,
+    users.avatar,
+    users.created_at AS user_created_at
+FROM admin_requests
+JOIN users ON admin_requests.user_id = users.id 
+WHERE admin_requests.status = 'pending'`,
+
+  approveAdminRequest: `WITH updated_request AS (
+  UPDATE admin_requests
+  SET status = 'approved'
+  WHERE id = $1
+  RETURNING user_id
+),
+updated_user AS (
+  UPDATE users
+  SET isadmin = TRUE
+  WHERE id = (SELECT user_id FROM updated_request)
+  RETURNING name, email
+)
+SELECT name, email FROM updated_user`,
+
+  rejectAdminRequest: `WITH updated_request AS (
+  UPDATE admin_requests
+  SET status = 'rejected'
+  WHERE id = $1
+  RETURNING user_id
+),
+updated_user AS (
+  UPDATE users
+  SET isadmin = TRUE
+  WHERE id = (SELECT user_id FROM updated_request)
+  RETURNING name, email
+)
+SELECT name, email FROM updated_user`,
 };

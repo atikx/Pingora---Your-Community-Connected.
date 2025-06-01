@@ -38,14 +38,14 @@ const init = async () => {
     return (
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-            <Toaster position="bottom-right" closeButton={true} />
-            <SidebarProvider defaultOpen={false}>
-              {user && <AppSidebar collapsible="icon" />}
-              <div className="flex min-h-screen flex-col w-full">
-                <Navbar />
+          <Toaster position="bottom-right" closeButton={true} />
+          <SidebarProvider defaultOpen={false}>
+            {user && <AppSidebar collapsible="icon" />}
+            <div className="flex min-h-screen relative w-screen overflow-x-clip flex-col ">
+              <Navbar />
                 <App />
-              </div>
-            </SidebarProvider>
+            </div>
+          </SidebarProvider>
         </BrowserRouter>
       </QueryClientProvider>
     );

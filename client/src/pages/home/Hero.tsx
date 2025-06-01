@@ -6,7 +6,7 @@ import img5 from "@/assets/images/img5.jpg";
 
 export default function Hero() {
   return (
-    <div className="flex flex-col-reverse sm:flex-row justify-center gap-8">
+    <div className="flex flex-col-reverse lg:flex-row items-center lg:items-start justify-center gap-8">
         <HeroCard
           title="How to Become a Sigma Boy"
           description="Ah, the joy of the open road-it's a good feeling. But if you're new to driving, you may..."

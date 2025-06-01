@@ -5,7 +5,11 @@ import { queries } from "../queries/queries.js";
 import dotenv from "dotenv";
 import { saveImgOnDisk } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../functions/imageUploader.js";
-import { sendNewPostMail } from "../functions/mailer.js";
+import {
+  sendAdminApprovedMail,
+  sendAdminRejectedMail,
+  sendNewPostMail,
+} from "../functions/mailer.js";
 import { limitTo2in1 } from "../middlewares/rateLimiters.js";
 
 const router = Router();
@@ -238,5 +242,47 @@ router.put(
     }
   }
 );
+
+router.get("/getAdminRequests", authenticateAdminToken, async (req, res) => {
+  try {
+    const { rows } = await pool.query(queries.getAdminRequests);
+    res.status(200).json(rows);
+  } catch (error) {
+    console.log("error getting admin requests", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.put("/approveAdminRequest", authenticateAdminToken, async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { rows } = await pool.query(queries.approveAdminRequest, [id]);
+    if (rows.length === 0) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.status(200).send("Request Approved Successfully");
+    const user = rows[0];
+    sendAdminApprovedMail(user.email, user.name);
+  } catch (error) {
+    console.log("error accepting request", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.put("/rejectAdminRequest", authenticateAdminToken, async (req, res) => {
+  try {
+    const { id } = req.body;
+    const { rows } = await pool.query(queries.rejectAdminRequest, [id]);
+    if (rows.length === 0) {
+      return res.status(500).json({ message: "Internal server error" });
+    }
+    res.status(200).send("Request Rejected Successfully");
+    const user = rows[0];
+    sendAdminRejectedMail(user.email, user.name);
+  } catch (error) {
+    console.log("error rejecting request", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 export default router;

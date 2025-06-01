@@ -81,7 +81,7 @@ export function Navbar() {
         height={3}
         shadow={true}
       />
-      <nav className="sticky top-0 z-50  overflow">
+      <nav className="sticky top-0 z-50 ">
         <div className="w-full max-w-full">
           <div className="flex h-16 px-4  pr-8 items-center justify-between bg-white/80 backdrop-blur-xs backdrop-filter border-b border-gray-200/20">
             

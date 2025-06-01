@@ -63,7 +63,7 @@ export function HeroCarousel() {
   };
 
   return (
-    <div className="w-[70%] transition duration-500 hover:scale-105 ">
+    <div className="sm:w-[70%]  w-[25rem]  transition duration-500 hover:scale-105 ">
       <Carousel
         setApi={setApi}
         plugins={[Autoplay({ delay: 3000 })]}
@@ -78,7 +78,7 @@ export function HeroCarousel() {
                   <img
                     src={item.image}
                     alt={`Slide ${index + 1}`}
-                    className="w-full h-[30rem] object-cover  "
+                    className="w-full md:h-[30rem] h-[20rem] object-cover  "
                   />
                 </div>
 

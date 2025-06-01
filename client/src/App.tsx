@@ -5,6 +5,7 @@ import AdminProtected from "./pages/protected/AdminProtected";
 import NewPost from "./pages/newPost/NewPost";
 import YourPosts from "./pages/yourPosts/YourPosts";
 import AddPostData from "./pages/addPostData/AddPostData";
+import AdminRequests from "./pages/adminRequests/AdminRequests";
 
 import Home from "./pages/home/Home";
 import Auth from "./pages/login/Auth";
@@ -21,7 +22,7 @@ import Subscriptions from "./pages/subscriptions/Subscriptions";
 
 function App() {
   return (
-    <div className="flex h-full flex-col px-4 z-10 lg:pr-8 items-center ">
+    <div className="flex h-full flex-col  px-4 z-10 lg:pr-8 items-center ">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<div>Categories</div>} />
@@ -36,6 +37,7 @@ function App() {
           <Route path="/newPost" element={<NewPost />} />
           <Route path="/yourPosts" element={<YourPosts />} />
           <Route path="/addPostData" element={<AddPostData />} />
+          <Route path="/adminRequests" element={<AdminRequests />} />
         </Route>
 
         {/* protected routes only after login */}

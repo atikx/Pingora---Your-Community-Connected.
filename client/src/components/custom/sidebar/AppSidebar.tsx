@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   ClipboardListIcon,
-  HelpCircleIcon,
+  Key,
   Heart,
   SettingsIcon,
   UsersIcon,
@@ -59,6 +59,11 @@ const data = {
       url: "/yourPosts",
       icon: ClipboardListIcon,
     },
+    {
+      name: "Admin Requests",
+      url: "/adminRequests",
+      icon: Key,
+    }
   ],
 };
 

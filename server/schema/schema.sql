@@ -55,6 +55,19 @@ CREATE TABLE subscriptions (
     UNIQUE (user_id, author_id)
 );
 
+CREATE TYPE request_status AS ENUM ('pending', 'approved', 'rejected');
+
+CREATE TABLE admin_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
+    user_id UUID REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    reason VARCHAR(100) NOT NULL,
+    status request_status DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+drop table adminRequests;   
+
 SELECT comments.*, users.name AS user_name, users.avatar AS user_avatar
 FROM comments
     JOIN users ON comments.user_id = users.id;
@@ -209,22 +222,16 @@ SELECT
     users.email AS author_email,
     users.avatar AS author_avatar
 FROM posts
-JOIN users ON posts.user_id = users.id
-WHERE posts.is_scheduled = false;
+    JOIN users ON posts.user_id = users.id
+WHERE
+    posts.is_scheduled = false;
 
+select * from subscriptions;
 
+SELECT users.id, users.name, users.avatar, users.created_at
+FROM subscriptions
+    JOIN users ON subscriptions.author_id = users.id
+WHERE
+    subscriptions.user_id = 'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa';
 
-select * from subscriptions ;
-
-
-SELECT 
-  users.id,
-  users.name,
-  users.avatar,
-  users.created_at
-FROM subscriptions 
-JOIN users ON subscriptions.author_id = users.id
-WHERE subscriptions.user_id = 'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa';
-
-
-Select * from posts;
+Select * from admin_requests;

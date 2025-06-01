@@ -8,7 +8,9 @@ function Home() {
     <div className="py-10 ">
       {/* Hero Section */}
 
-      <Hero />
+      <div className="">
+        <Hero />
+      </div>
 
       <Separator className="my-6" />
 

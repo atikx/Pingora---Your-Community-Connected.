@@ -56,19 +56,6 @@ export const sendRequestMailForAdminToMe = async (name, email, reason) => {
 };
 
 export const sendNewPostMail = async (bccList, post) => {
-  /**
-   * bccList: string[] - list of email addresses to receive the mail (in BCC)
-   * post: {
-   *   author_name: string,
-   *   author_avatar: string,
-   *   post_link: string,
-   *   post_image: string,
-   *   post_title: string,
-   *   post_description: string,
-   *   post_created_at: string
-   * }
-   */
-
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -78,7 +65,10 @@ export const sendNewPostMail = async (bccList, post) => {
     },
   });
 
-  let htmlTemplate = fs.readFileSync("./template/newPostNotification.html", "utf-8");
+  let htmlTemplate = fs.readFileSync(
+    "./template/newPostNotification.html",
+    "utf-8"
+  );
 
   htmlTemplate = htmlTemplate
     .replace(/{{author_name}}/g, post.author_name)
@@ -99,4 +89,55 @@ export const sendNewPostMail = async (bccList, post) => {
 
   await transporter.sendMail(mailOptions);
   console.log(`New post notification sent to ${bccList.length} users`);
+};
+
+export const sendAdminApprovedMail = async (to, name) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  const htmlTemplate = fs
+    .readFileSync("./template/admin-approved.html", "utf-8")
+    .replace(/{{NAME}}/g, name);
+
+  const mailOptions = {
+    from: `"Pingora" <${process.env.MAIL_USER}>`,
+    to,
+    subject: "🎉 You're Now an Admin Of PINGORA !",
+    html: htmlTemplate,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Admin approval mail sent to ${to}`);
+};
+
+
+export const sendAdminRejectedMail = async (to, name) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
+  const htmlTemplate = fs
+    .readFileSync("./template/admin-rejected.html", "utf-8")
+    .replace(/{{NAME}}/g, name);
+
+  const mailOptions = {
+    from: `"Pingora" <${process.env.MAIL_USER}>`,
+    to,
+    subject: "Admin Request Rejected for PINGORA",
+    html: htmlTemplate,
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log(`Admin rejection mail sent to ${to}`);
 };
