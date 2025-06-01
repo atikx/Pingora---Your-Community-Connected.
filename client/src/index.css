@@ -252,5 +252,31 @@ body {
   @apply p-4 box-border;
 }
 
+.ce-toolbar__plus {
+    @apply p-1  cursor-pointer bg-primary hover:bg-primary
+}
+
+.ce-toolbar__plus::before {
+  /* content: '✚';  */
+  @apply text-white text-3xl
+}
+
+.ce-toolbar__plus svg {
+  @apply text-white scale-150
+}
+
+
+.ce-toolbar__settings-btn {
+  @apply bg-primary 
+}
+
+.ce-toolbar__settings-btn svg { 
+  /* display: none !important; */
+  @apply text-white bg-primary
+}
+
+.ce-toolbar__actions--opened{
+  @apply flex justify-stretch gap-1
+}
 
 /* editor js css */

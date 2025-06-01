@@ -253,36 +253,46 @@ router.get("/getAdminRequests", authenticateAdminToken, async (req, res) => {
   }
 });
 
-router.put("/approveAdminRequest", authenticateAdminToken, async (req, res) => {
-  try {
-    const { id } = req.body;
-    const { rows } = await pool.query(queries.approveAdminRequest, [id]);
-    if (rows.length === 0) {
-      return res.status(500).json({ message: "Internal server error" });
+router.put(
+  "/approveAdminRequest",
+  limitTo2in1,
+  authenticateAdminToken,
+  async (req, res) => {
+    try {
+      const { id } = req.body;
+      const { rows } = await pool.query(queries.approveAdminRequest, [id]);
+      if (rows.length === 0) {
+        return res.status(500).json({ message: "Internal server error" });
+      }
+      res.status(200).send("Request Approved Successfully");
+      const user = rows[0];
+      sendAdminApprovedMail(user.email, user.name);
+    } catch (error) {
+      console.log("error accepting request", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-    res.status(200).send("Request Approved Successfully");
-    const user = rows[0];
-    sendAdminApprovedMail(user.email, user.name);
-  } catch (error) {
-    console.log("error accepting request", error);
-    res.status(500).json({ message: "Internal server error" });
   }
-});
+);
 
-router.put("/rejectAdminRequest", authenticateAdminToken, async (req, res) => {
-  try {
-    const { id } = req.body;
-    const { rows } = await pool.query(queries.rejectAdminRequest, [id]);
-    if (rows.length === 0) {
-      return res.status(500).json({ message: "Internal server error" });
+router.put(
+  "/rejectAdminRequest",
+  limitTo2in1,
+  authenticateAdminToken,
+  async (req, res) => {
+    try {
+      const { id } = req.body;
+      const { rows } = await pool.query(queries.rejectAdminRequest, [id]);
+      if (rows.length === 0) {
+        return res.status(500).json({ message: "Internal server error" });
+      }
+      res.status(200).send("Request Rejected Successfully");
+      const user = rows[0];
+      sendAdminRejectedMail(user.email, user.name);
+    } catch (error) {
+      console.log("error rejecting request", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-    res.status(200).send("Request Rejected Successfully");
-    const user = rows[0];
-    sendAdminRejectedMail(user.email, user.name);
-  } catch (error) {
-    console.log("error rejecting request", error);
-    res.status(500).json({ message: "Internal server error" });
   }
-});
+);
 
 export default router;

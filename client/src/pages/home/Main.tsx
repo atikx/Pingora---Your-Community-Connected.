@@ -23,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const fetchPosts = async ({ filter = "Latest", page = 1 }) => {
   const response = await api.get("/general/getAllPosts", {
-    params: { filter, page, limit: 4 },
+    params: { filter, page, limit: 8 },
   });
   return response.data;
 };
@@ -75,7 +75,7 @@ export default function Main() {
     const items = [];
     
     // Logic for showing page numbers with ellipsis
-    if (totalPages <= 5) {
+    if (totalPages <= 4) {
       // Show all pages if 5 or fewer
       for (let i = 1; i <= totalPages; i++) {
         items.push(
