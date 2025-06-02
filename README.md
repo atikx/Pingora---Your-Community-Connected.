@@ -22,12 +22,23 @@ Open new Terminal and run the following commands
   npm run dev
 ```
 
-## Prerequisites
+Note: You Can also run the app with docker but you still have to install postgres in your system because I have used db outside of docker
+
+## Prerequisites (For using without Docker)
 
 Make sure you have the following installed:
+- Git (for clonning)
 - Node.js (v16 or higher)
 - npm 
-- Git
+- PostGres
+
+  
+## Prerequisites (For using with Docker)
+
+Make sure you have the following installed:
+- Git (for clonning)
+- Docker Engine
+- PostGres
 
 ## 📁 Project Structure
 ```
@@ -68,9 +79,10 @@ pingora/
 ![App Screenshot](https://res.cloudinary.com/dae3h92th/image/upload/v1748851805/Screenshot_2025-06-02_133957_yn9ufb.png)
 
 4. Your Posts page
+5. 
 ![App Screenshot](https://res.cloudinary.com/dae3h92th/image/upload/v1748851860/Screenshot_2025-06-02_134047_umual1.png)
 
-5. Post page
+6. Post page
 
 ![App Screenshot](https://res.cloudinary.com/dae3h92th/image/upload/v1748851976/Screenshot_2025-06-02_134243_ho2uvr.png)
 
