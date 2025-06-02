@@ -57,14 +57,22 @@ pingora/
 **Db:** PostgreSQL 
 
 
-## Features
 
-- Post Scheduling
-- Live Preview for the Post
-- Admin Request Table
-- Modern Design
-- Fully Responsive
-- Cross platform
+## Features Implimented
+
+- Image upload
+- Paginatio (werever required)
+- Content Sanitization in Editor
+- Markdown Support with realtime Preview of the Post
+- Option to Subscribe the author and get notified about new posts.
+- Option to like the posts and see all the liked posts.
+- Rate Limiting to prevent scams
+-  Request caching in the frontend for expensive api requests 
+- Option to Schedule Post to get uploaded automaticaly on a particular time
+- Caching mechanism in server
+- Proper error handling with React Suspense Boundaries
+- Nested comments section
+
 
 
 ## Screenshots
