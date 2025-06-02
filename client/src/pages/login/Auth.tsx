@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/lib/store";
 import { useMutation } from "@tanstack/react-query";
+import ErrorBoundary from "@/components/custom/ErrorBoundary";
 
 export default function Auth({
   className,
@@ -64,6 +65,8 @@ export default function Auth({
       // This runs when the mutation is either successful or fails
     }
   });
+
+
 
   const googleMutation = useMutation({
     mutationFn: async () => {

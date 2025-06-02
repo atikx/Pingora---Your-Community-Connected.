@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { useAuthStore } from "./lib/store.ts";
 import api from "./lib/axiosinstance.ts";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import ErrorBoundary from "./components/custom/ErrorBoundary.tsx";
 
 const init = async () => {
   // const user: UserInterface | null = {
@@ -36,18 +37,24 @@ const init = async () => {
     const queryClient = new QueryClient();
 
     return (
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Toaster position="bottom-right" closeButton={true} />
-          <SidebarProvider defaultOpen={false}>
-            {user && <AppSidebar collapsible="icon" />}
-            <div className="flex min-h-screen relative w-screen overflow-x-clip flex-col ">
-              <Navbar />
-                <App />
-            </div>
-          </SidebarProvider>
-        </BrowserRouter>
-      </QueryClientProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Toaster position="bottom-right" closeButton={true} />
+            <SidebarProvider defaultOpen={false}>
+              {user && <AppSidebar collapsible="icon" />}
+              <div className="flex min-h-screen relative w-screen overflow-x-clip flex-col ">
+                <ErrorBoundary>
+                  <Navbar />
+                </ErrorBoundary>
+                <ErrorBoundary>
+                  <App />
+                </ErrorBoundary>
+              </div>
+            </SidebarProvider>
+          </BrowserRouter>
+        </QueryClientProvider>
+      </ErrorBoundary>
     );
   };
 

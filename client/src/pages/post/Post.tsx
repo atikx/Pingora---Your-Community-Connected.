@@ -7,6 +7,7 @@ import Author from "./Author";
 import Comments from "./Comments";
 import api from "@/lib/axiosinstance";
 import { useQuery } from "@tanstack/react-query";
+import ErrorBoundary from "@/components/custom/ErrorBoundary";
 
 export default function Post() {
   const { id } = useParams<{ id: string }>();
@@ -163,8 +164,12 @@ export default function Post() {
         id="editorjs"
         className="p-4 box-border w-full space-y-4 editorjs flex-grow"
       >
-        {postBlocks.map((block: any) => renderBlock(block))}
-        <Comments post_id={postData.id} />
+        <ErrorBoundary>
+          {postBlocks.map((block: any) => renderBlock(block))}
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <Comments post_id={postData.id} />
+        </ErrorBoundary>
       </div>
 
       {/* Vertical Separator */}
@@ -176,19 +181,21 @@ export default function Post() {
       </div>
 
       {/* Render the author area with tags */}
-      <div className="md:w-1/4 flex justify-center items-center md:block">
-        {postData && (
-          <Author
-            author_id={postData.author_id}
-            post_id={postData.id}
-            name={postData.author_name}
-            avatar={postData.author_avatar}
-            email={postData.author_email}
-            date={postData.created_at}
-            tags={postData.tags}
-          />
-        )}
-      </div>
+      <ErrorBoundary>
+        <div className="md:w-1/4 flex justify-center items-center md:block">
+          {postData && (
+            <Author
+              author_id={postData.author_id}
+              post_id={postData.id}
+              name={postData.author_name}
+              avatar={postData.author_avatar}
+              email={postData.author_email}
+              date={postData.created_at}
+              tags={postData.tags}
+            />
+          )}
+        </div>
+      </ErrorBoundary>
     </div>
   );
 }

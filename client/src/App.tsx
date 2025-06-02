@@ -25,7 +25,6 @@ function App() {
     <div className="flex h-full flex-col  px-4 z-10 lg:pr-8 items-center ">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/categories" element={<div>Categories</div>} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/auth/otp" element={<Otp />} />
         <Route path="/post/:id" element={<Post />} />

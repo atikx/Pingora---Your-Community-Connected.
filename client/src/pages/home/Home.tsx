@@ -2,6 +2,7 @@ import { Separator } from "@/components/ui/separator";
 
 import Hero from "./Hero";
 import Main from "./Main";
+import ErrorBoundary from "@/components/custom/ErrorBoundary";
 
 function Home() {
   return (
@@ -9,13 +10,17 @@ function Home() {
       {/* Hero Section */}
 
       <div className="">
-        <Hero />
+        <ErrorBoundary>
+          <Hero />
+        </ErrorBoundary>
       </div>
 
       <Separator className="my-6" />
 
       {/* Posts Section  */}
-      <Main />
+      <ErrorBoundary>
+        <Main />
+      </ErrorBoundary>
     </div>
   );
 }

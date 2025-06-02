@@ -71,6 +71,8 @@ router.post("/addSubscription", limitTo10in1, async (req, res) => {
   const { author_id } = req.body;
   const { id } = req.verifiedUser;
 
+  console.log(author_id, id);
+
   try {
     const { rows } = await pool.query(queries.addSubscription, [id, author_id]);
 
@@ -288,10 +290,7 @@ router.post("/createAdminRequest", limitTo1in1Day, async (req, res) => {
     });
   }
   try {
-    const { rows } = await pool.query(queries.createAdminRequest, [
-      id,
-      reason,
-    ]);
+    const { rows } = await pool.query(queries.createAdminRequest, [id, reason]);
 
     if (rows.length === 0) {
       return res.status(400).json({

@@ -22,6 +22,7 @@ app.use(cookieParser());
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/general", generalRoutes);
+app.use("/verifiedUser", verifiedUserRoutes);
 
 
 app.post("/", (req, res) => {

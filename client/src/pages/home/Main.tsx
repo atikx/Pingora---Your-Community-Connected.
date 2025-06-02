@@ -32,6 +32,7 @@ export default function Main() {
   const [filter, setFilter] = useState("Latest");
   const [currentPage, setCurrentPage] = useState(1);
 
+
   const {
     data: postsData = { posts: [], pagination: { totalPages: 0 } },
     isLoading,

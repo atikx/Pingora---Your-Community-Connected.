@@ -45,9 +45,12 @@ router.post("/auth",limitTo10in1, async (req, res) => {
           res.status(420).send("invalid password");
         }
       } else {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        if(!req.body.email || !req.body.password){
+          return res.status(400).send("Empty inputs")
+        }
+        const hashedPassword = await bcrypt.hash(req.body.password.trim(), 10);
         const newUser = await pool.query(queries.createUserWithPassword, [
-          req.body.email,
+          req.body.email.trim(),
           hashedPassword,
         ]);
         res.cookie("token", generateToken(newUser.rows[0]), {
