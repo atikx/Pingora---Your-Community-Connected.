@@ -27,5 +27,17 @@ services:
     env_file:
       - ./server/.env
     environment:
-      # change DATABASE_URL to connect to your local Postgres
-      - DATABASE_URL=postgres://<your_pg_user>:<your_pg_password>@host.docker.internal:<your_pg_port>/<your_pg_database>
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:

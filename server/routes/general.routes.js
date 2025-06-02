@@ -2,35 +2,83 @@ import Router from "express";
 import { pool } from "../config/db.js";
 import { queries } from "../queries/queries.js";
 import { limitTo10in1 } from "../middlewares/rateLimiters.js";
+import redis from "../redisClient.js";
+
 const router = Router();
 
-router.get("/getAllPosts",limitTo10in1, async (req, res) => {
+// router.get("/getAllPosts",limitTo10in1, async (req, res) => {
+//   try {
+//     const { filter = "Latest", page = 1, limit = 8 } = req.query;
+//     const offset = (page - 1) * parseInt(limit);
+
+//     // Validate filter value
+//     const validFilters = ["Latest", "Oldest", "Most Popular"];
+//     const selectedFilter = validFilters.includes(filter) ? filter : "Latest";
+
+//     // Build the complete query
+//     const baseQuery = queries.getAllPosts;
+//     const filterQuery = queries.getFilteredPosts[selectedFilter];
+//     const fullQuery = `${baseQuery} ${filterQuery}`;
+
+//     // Get posts with pagination and filtering
+//     const { rows: posts } = await pool.query(fullQuery, [
+//       parseInt(limit),
+//       offset,
+//     ]);
+
+//     // Get total count for pagination
+//     const countResult = await pool.query(queries.getPostsCount);
+//     const totalCount = parseInt(countResult.rows[0].count);
+//     const totalPages = Math.ceil(totalCount / limit);
+
+//     // Return posts with pagination metadata
+
+//     res.status(200).json({
+//       posts,
+//       pagination: {
+//         currentPage: parseInt(page),
+//         totalPages,
+//         totalPosts: totalCount,
+//         postsPerPage: parseInt(limit),
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error fetching posts:", error);
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// });
+
+router.get("/getAllPosts", limitTo10in1, async (req, res) => {
   try {
     const { filter = "Latest", page = 1, limit = 8 } = req.query;
     const offset = (page - 1) * parseInt(limit);
 
-    // Validate filter value
     const validFilters = ["Latest", "Oldest", "Most Popular"];
     const selectedFilter = validFilters.includes(filter) ? filter : "Latest";
 
-    // Build the complete query
+    const cacheKey = `getAllPosts:${selectedFilter}:${page}:${limit}`;
+
+    // 🔍 Check Redis cache
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+      console.log("cache hit");
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
     const baseQuery = queries.getAllPosts;
     const filterQuery = queries.getFilteredPosts[selectedFilter];
     const fullQuery = `${baseQuery} ${filterQuery}`;
 
-    // Get posts with pagination and filtering
     const { rows: posts } = await pool.query(fullQuery, [
       parseInt(limit),
       offset,
     ]);
 
-    // Get total count for pagination
     const countResult = await pool.query(queries.getPostsCount);
     const totalCount = parseInt(countResult.rows[0].count);
     const totalPages = Math.ceil(totalCount / limit);
 
-    // Return posts with pagination metadata
-    res.status(200).json({
+    const response = {
       posts,
       pagination: {
         currentPage: parseInt(page),
@@ -38,10 +86,17 @@ router.get("/getAllPosts",limitTo10in1, async (req, res) => {
         totalPosts: totalCount,
         postsPerPage: parseInt(limit),
       },
+    };
+
+    // 💾 Cache in Redis for 60 seconds
+    await redis.set(cacheKey, JSON.stringify(response), {
+      EX: 60,
     });
+    console.log("cache miss");
+    res.status(200).json(response);
   } catch (error) {
     console.error("Error fetching posts:", error);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
@@ -70,7 +125,7 @@ router.get("/getPost/:id", async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 });
-router.get("/filter",limitTo10in1, async (req, res) => {
+router.get("/filter", limitTo10in1, async (req, res) => {
   try {
     const { category, sort = "Latest" } = req.query;
     const page = parseInt(req.query.page) || 1;
@@ -174,11 +229,9 @@ router.get("/getComments/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-
     if (!id) {
       return res.status(400).json({ message: "Invalid post ID" });
     }
-
 
     const { rows: comments } = await pool.query(queries.getCommentsByPostId, [
       id,
@@ -188,8 +241,6 @@ router.get("/getComments/:id", async (req, res) => {
     if (comments.length === 0) {
       return res.status(404).json({ message: "No comments found" });
     }
-
-
 
     // Return the comments
     res.status(200).json(comments);
