@@ -44,11 +44,9 @@ const uploadByFile = async (file: File) => {
 export const EditorTools = {
   list: {
     class: List,
-    inlineToolbar: true,
   },
   header: {
     class: Header,
-    inlineToolbar: true,
   },
   inlineCode: InlineCode,
   embed: Embed,

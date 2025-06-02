@@ -22,11 +22,12 @@ app.use(cookieParser());
 app.use("/user", userRoutes);
 app.use("/admin", adminRoutes);
 app.use("/general", generalRoutes);
-app.use("/verifiedUser", verifiedUserRoutes);
 
-app.get("/", async (req, res) => {
-  console.log("Welcome to the server!");
-  res.status(200).send("server is running");
+
+app.post("/", (req, res) => {
+  const { content } = req.body;
+  console.log(filter.clean(content));
+  res.send(filter.clean(content));
 });
 
 cron.schedule("* * * * *", () => {

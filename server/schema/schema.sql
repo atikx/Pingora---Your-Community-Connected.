@@ -234,4 +234,4 @@ FROM subscriptions
 WHERE
     subscriptions.user_id = 'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa';
 
-Select * from admin_requests;
+Select * from posts;

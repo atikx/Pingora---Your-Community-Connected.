@@ -10,9 +10,11 @@ import {
   sendAdminRejectedMail,
   sendNewPostMail,
 } from "../functions/mailer.js";
-import { limitTo2in1 } from "../middlewares/rateLimiters.js";
+import { limitTo10in1, limitTo2in1 } from "../middlewares/rateLimiters.js";
+import { Filter } from "bad-words";
 
 const router = Router();
+const filter = new Filter();
 
 router.post(
   "/addPost",
@@ -29,6 +31,11 @@ router.post(
       is_scheduled,
       scheduled_at,
     } = req.body;
+
+    if (content.blocks && content.blocks.length == 0) {
+      return res.send(300).send("post with no content cant be added");
+    }
+
     const { id, name, avatar } = req.admin;
 
     const localFilePath = req.file?.path;
@@ -36,14 +43,13 @@ router.post(
       return res.status(400).json({ message: "No banner uploaded" });
     }
 
-    // Upload to Cloudinary
+    // Upload image to Cloudinary
     const cloudinaryResponse = await uploadOnCloudinary(localFilePath);
-    console.log(cloudinaryResponse);
     if (!cloudinaryResponse) {
       return res.status(500).json({ message: "Failed to upload image" });
     }
 
-    // Parse tags string to array
+    // Parse tags string to array safely
     let parsedTags = [];
     try {
       parsedTags = JSON.parse(tags);
@@ -52,45 +58,83 @@ router.post(
       return res.status(400).json({ message: "Invalid tags format" });
     }
 
-    // Function to convert UTC to IST
-    const convertUTCtoIST = (utcDateString) => {
+    let contentBlocks;
+    try {
+      const parsedContent = JSON.parse(content);
+
+      // Support full EditorJS object or just blocks array
+      contentBlocks = Array.isArray(parsedContent.blocks)
+        ? parsedContent.blocks
+        : Array.isArray(parsedContent)
+        ? parsedContent
+        : null;
+
+      if (!Array.isArray(contentBlocks)) {
+        return res.status(400).json({ message: "Invalid content format" });
+      }
+
+      // Sanitize text using bad-words
+      contentBlocks = contentBlocks.map((block) => {
+        if (block.type === "paragraph" && block.data?.text) {
+          return {
+            ...block,
+            data: {
+              ...block.data,
+              text: filter.clean(block.data.text),
+            },
+          };
+        }
+        return block;
+      });
+    } catch (err) {
+      return res.status(400).json({ message: "Invalid content JSON" });
+    }
+
+    const contentObject = JSON.parse(content);
+
+    contentObject.blocks = contentBlocks;
+
+    const RealContent = JSON.stringify(contentObject);
+
+    // console.log(contentObject);
+    // console.log(contentBlocks);
+    // return res.status(100).send(contentObject);
+
+    // Convert UTC to IST
+    const convertUTCtoIST = (utc) => {
       try {
-        // Parse the UTC datetime string
-        const utcDate = new Date(utcDateString);
-
-        // IST is UTC + 5:30
-        const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000);
-
-        // Return as ISO string without timezone info (local time)
-        return istDate.toISOString().slice(0, 19); // Remove the 'Z' at the end
-      } catch (error) {
-        console.error("Error converting UTC to IST:", error);
+        const date = new Date(utc);
+        const istDate = new Date(date.getTime() + 5.5 * 60 * 60 * 1000);
+        return istDate.toISOString().slice(0, 19);
+      } catch {
         return null;
       }
     };
 
-    if (is_scheduled === "false" || is_scheduled === false) {
-      try {
+    try {
+      if (is_scheduled === "false" || is_scheduled === false) {
+        // Insert post immediately
         const { rows } = await pool.query(queries.addPost, [
           id,
           title,
           description,
-          content,
+          RealContent,
           cloudinaryResponse,
-          parsedTags, // should be a real JS array
+          parsedTags,
           category,
         ]);
 
         if (rows.length === 0) {
-          return res.status(400).json({
-            message: "Failed to add post",
-          });
+          return res.status(400).json({ message: "Failed to add post" });
         }
 
+        // Send success response
         res.status(200).json({
           message: "Post added successfully",
           post: rows[0],
         });
+
+        // Notify subscribers (optional)
         try {
           const { rows: subscribers } = await pool.query(
             queries.getSubscribers,
@@ -111,63 +155,51 @@ router.post(
             );
           }
         } catch (error) {
-          console.log("errro in finding subscribers", error);
+          console.error("Error notifying subscribers:", error);
         }
-      } catch (error) {
-        console.error("Error adding post:", error);
-        return res.status(500).json({
-          message: "Internal Server Error",
-        });
-      }
-    } else if (is_scheduled === "true" || is_scheduled === true) {
-      try {
-        // Convert UTC scheduled_at to IST
+      } else if (is_scheduled === "true" || is_scheduled === true) {
+        // Scheduled post flow
         const scheduledAtIST = convertUTCtoIST(scheduled_at);
-
         if (!scheduledAtIST) {
-          return res.status(400).json({
-            message: "Invalid scheduled_at format",
-          });
+          return res
+            .status(400)
+            .json({ message: "Invalid scheduled_at format" });
         }
-
-        console.log("Original UTC time:", scheduled_at);
-        console.log("Converted IST time:", scheduledAtIST);
 
         const { rows } = await pool.query(queries.addScheduledPost, [
           id,
           title,
           description,
-          content,
+          RealContent,
           cloudinaryResponse,
-          parsedTags, // should be a real JS array
+          parsedTags,
           category,
           is_scheduled,
-          scheduledAtIST, // Use converted IST time instead of UTC
+          scheduledAtIST,
         ]);
 
         if (rows.length === 0) {
-          return res.status(400).json({
-            message: "Failed to add scheduled post",
-          });
+          return res
+            .status(400)
+            .json({ message: "Failed to add scheduled post" });
         }
 
         res.status(202).json({
           message: "Post Scheduled successfully",
           post: rows[0],
-          scheduled_time_ist: scheduledAtIST, // Include converted time in response
-        });
-      } catch (error) {
-        console.error("Error adding scheduled post:", error);
-        return res.status(500).json({
-          message: "Internal Server Error",
+          scheduled_time_ist: scheduledAtIST,
         });
       }
+    } catch (error) {
+      console.error("Error handling post insertion:", error);
+      res.status(500).json({ message: "Internal Server Error" });
     }
   }
 );
 
 router.post(
   "/uploadImageForEditor",
+  limitTo10in1,
   authenticateAdminToken,
   saveImgOnDisk.single("image"),
   async (req, res) => {

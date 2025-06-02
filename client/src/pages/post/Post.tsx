@@ -19,6 +19,7 @@ export default function Post() {
     queryKey: ["post", id],
     queryFn: async () => {
       const res = await api.get(`/general/getPost/${id}`);
+      console.log(res.data);
       return res.data;
     },
     refetchOnWindowFocus: false,
@@ -29,7 +30,9 @@ export default function Post() {
   const postBlocks = postData?.content?.blocks ?? SamplePostData;
 
   // State to track checklist items by block id for interactivity
-  const [checklistState, setChecklistState] = useState<Record<string, any[]>>({});
+  const [checklistState, setChecklistState] = useState<Record<string, any[]>>(
+    {}
+  );
 
   // Initialize checklist state from postBlocks on load or when postBlocks changes
   useEffect(() => {

@@ -4,6 +4,7 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "bad-words": "^4.0.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "casl": "^1.1.0",
