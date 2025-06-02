@@ -100,6 +100,13 @@ pingora/
 
 
 
+## My thoughts on Completion
+
+I have completed the project till STAGE-4 (which was the final stage) with implimenting each and every task mentioned in each stage.
+
+I have tried my best to follow all the mentioned good practises but I sill messed up with maintaining proper git comments and code uploads. I was supposed to use conventional commits but I didnt used them till half of the project. 
+
+But I think I have done the best I can considering the time (because I was also having CRUX inductions along with this induction)
 
 
 
