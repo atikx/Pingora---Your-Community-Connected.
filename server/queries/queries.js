@@ -250,7 +250,7 @@ SELECT name, email FROM updated_user`,
 ),
 updated_user AS (
   UPDATE users
-  SET isadmin = TRUE
+  SET isadmin = FALSE
   WHERE id = (SELECT user_id FROM updated_request)
   RETURNING name, email
 )

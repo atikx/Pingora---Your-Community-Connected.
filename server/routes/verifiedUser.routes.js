@@ -284,6 +284,10 @@ router.post("/createAdminRequest", limitTo1in1Day, async (req, res) => {
   const { reason } = req.body;
   const { id, isadmin } = req.verifiedUser;
 
+  if(reason.length > 502){
+    return res.status(400).send("Too long reason")
+  }
+
   if (isadmin) {
     return res.status(403).json({
       message: "You are already an admin",

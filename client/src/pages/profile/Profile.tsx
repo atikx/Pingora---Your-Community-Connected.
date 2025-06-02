@@ -600,6 +600,7 @@ export default function Profile({ defaultTab }: ProfileProps) {
                             <DialogTitle>Request Admin Access</DialogTitle>
                             <DialogDescription>
                               Please explain why you want to become an admin
+                              (max 500 characters)
                             </DialogDescription>
                           </DialogHeader>
                           <form onSubmit={handleAdminRequestSubmit}>
@@ -615,7 +616,20 @@ export default function Profile({ defaultTab }: ProfileProps) {
                                   placeholder="Explain why you should be an admin"
                                   required
                                   className="min-h-[120px] resize-y"
+                                  maxLength={500}
                                 />
+                                <div className="flex justify-between items-center text-sm text-muted-foreground">
+                                  <span>Character limit: 500</span>
+                                  <span
+                                    className={
+                                      adminReason.length > 450
+                                        ? "text-orange-500"
+                                        : ""
+                                    }
+                                  >
+                                    {adminReason.length}/500
+                                  </span>
+                                </div>
                               </div>
                             </div>
                             <DialogFooter>

@@ -36,11 +36,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpDown, Check, X, RefreshCw } from "lucide-react";
+import { ArrowUpDown, Check, X, RefreshCw, Eye } from "lucide-react";
 import api from "@/lib/axiosinstance";
 import { toast } from "sonner";
 
@@ -132,6 +146,63 @@ export default function AdminRequests({
     }
   };
 
+  // Component for displaying reason with expand functionality
+  const ReasonCell = ({ reason, userName }: { reason: string; userName: string }) => {
+    const isLong = reason.length > 50;
+    const truncatedReason = isLong ? reason.substring(0, 50) + "..." : reason;
+
+    if (!isLong) {
+      return (
+        <div className="max-w-[150px] md:max-w-[300px]">
+          <p className="text-xs md:text-sm">{reason}</p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="max-w-[150px] md:max-w-[300px]">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center gap-2">
+                <p className="text-xs md:text-sm truncate flex-1">
+                  {truncatedReason}
+                </p>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 shrink-0"
+                    >
+                      <Eye className="h-3 w-3" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Admin Request Reason</DialogTitle>
+                      <DialogDescription>
+                        Request from {userName}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {reason}
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs">
+              <p className="text-xs">{reason}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    );
+  };
+
   const columns: ColumnDef<AdminRequest>[] = [
     {
       accessorKey: "name",
@@ -175,14 +246,7 @@ export default function AdminRequests({
         </Button>
       ),
       cell: ({ row }) => (
-        <div className="max-w-[150px] md:max-w-[300px]">
-          <p
-            className="text-xs md:text-sm truncate"
-            title={row.original.reason}
-          >
-            {row.original.reason}
-          </p>
-        </div>
+        <ReasonCell reason={row.original.reason} userName={row.original.name} />
       ),
     },
     {
@@ -330,7 +394,7 @@ export default function AdminRequests({
     },
   });
 
-  // Mobile Card Component
+  // Enhanced Mobile Card Component with better reason display
   const MobileRequestCard = ({ request }: { request: AdminRequest }) => (
     <Card className="mb-4">
       <CardHeader className="pb-3">
@@ -352,8 +416,38 @@ export default function AdminRequests({
       <CardContent className="pt-0">
         <div className="space-y-3">
           <div>
-            <p className="text-sm font-medium text-muted-foreground">Reason</p>
-            <p className="text-sm">{request.reason}</p>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-sm font-medium text-muted-foreground">Reason</p>
+              {request.reason.length > 100 && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="ghost" size="sm" className="h-6 px-2">
+                      <Eye className="h-3 w-3 mr-1" />
+                      <span className="text-xs">View Full</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-md mx-4">
+                    <DialogHeader>
+                      <DialogTitle>Admin Request Reason</DialogTitle>
+                      <DialogDescription>
+                        Request from {request.name}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="mt-4">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                        {request.reason}
+                      </p>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+            <p className="text-sm leading-relaxed">
+              {request.reason.length > 100 
+                ? `${request.reason.substring(0, 100)}...` 
+                : request.reason
+              }
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-4 text-xs">
             <div>
@@ -380,7 +474,7 @@ export default function AdminRequests({
               </AlertDialogTrigger>
               <AlertDialogContent className="mx-4 max-w-md">
                 <AlertDialogHeader>
-                  <AlertDialogTitle> Approve Admin Request</AlertDialogTitle>
+                  <AlertDialogTitle>Approve Admin Request</AlertDialogTitle>
                   <AlertDialogDescription>
                     Are you sure you want to approve the admin request from{" "}
                     <strong>{request.name}</strong>? This will grant them

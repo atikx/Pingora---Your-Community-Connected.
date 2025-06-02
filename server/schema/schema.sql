@@ -60,11 +60,13 @@ CREATE TYPE request_status AS ENUM ('pending', 'approved', 'rejected');
 CREATE TABLE admin_requests (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4 (),
     user_id UUID REFERENCES users (id) ON DELETE CASCADE NOT NULL,
-    reason VARCHAR(100) NOT NULL,
+    reason VARCHAR(500) NOT NULL,
     status request_status DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+DROP Table admin_requests
 
 drop table adminRequests;   
 
@@ -234,4 +236,6 @@ FROM subscriptions
 WHERE
     subscriptions.user_id = 'a5c6cfbf-abcb-447f-8cb7-20fef2ef3faa';
 
-Select * from users where isadmin = false;
+Select * from users where isadmin = true;
+
+UPDATE users SET isadmin = false where id = 'e77492eb-147e-4248-97fc-e9628891f728'
