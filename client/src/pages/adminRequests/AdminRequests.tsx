@@ -40,7 +40,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpDown, Check, X, MoreVertical, RefreshCw } from "lucide-react";
+import { ArrowUpDown, Check, X, RefreshCw } from "lucide-react";
 import api from "@/lib/axiosinstance";
 import { toast } from "sonner";
 
@@ -71,7 +71,6 @@ const fetchAdminRequests = async (): Promise<AdminRequest[]> => {
 };
 
 export default function AdminRequests({
-  onHandleRequest,
   isProcessing,
 }: AdminRequestsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
-import { CornerDownLeft, MessageCircle, Reply, Send, X } from "lucide-react";
+import {  MessageCircle, Reply, Send, X } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Can } from "@casl/react";
 

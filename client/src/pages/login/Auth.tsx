@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GalleryVerticalEnd } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -19,7 +19,6 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/lib/store";
 import { useMutation } from "@tanstack/react-query";
-import ErrorBoundary from "@/components/custom/ErrorBoundary";
 
 export default function Auth({
   className,

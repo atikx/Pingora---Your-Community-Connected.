@@ -2,7 +2,6 @@ import api from "@/lib/axiosinstance";
 import { useQuery } from "@tanstack/react-query";
 import { useAuthStore } from "@/lib/store";
 import VerticalPost from "@/components/custom/VerticalPost";
-import { useEffect } from "react";
 
 type LikedPost = {
   id: string;

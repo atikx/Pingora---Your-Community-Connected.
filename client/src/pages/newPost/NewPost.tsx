@@ -1,4 +1,4 @@
-import { use, useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 import EditorJS from "@editorjs/editorjs";
 import { EditorTools } from "../../lib/EditorTools";
 import "./editorStyles.css";
